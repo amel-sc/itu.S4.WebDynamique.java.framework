@@ -12,6 +12,13 @@ public class FrontControllerServlet extends HttpServlet {
         this.processRequest(req, res);
     }
 
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        res.setContentType("text/plain");
+        
+        // processRequest
+        this.processRequest(req, res);
+    }
+
     // function to get uri 
     public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         PrintWriter out = res.getWriter();
