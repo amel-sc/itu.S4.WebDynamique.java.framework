@@ -19,7 +19,10 @@ public class FrontControllerServlet extends HttpServlet {
         // get URI
         String uri = req.getRequestURI();
 
+        // separate URI by /
+        String[] splited = uri.split("/");
+
         // print uri
-        out.println(uri);
+        out.println(splited[splited.length - 1]);
     }
 }
