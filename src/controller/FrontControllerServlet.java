@@ -22,7 +22,13 @@ public class FrontControllerServlet extends HttpServlet {
         // separate URI by /
         String[] splited = uri.split("/");
 
+        // get last in URI
+        String lastInUri = "";
+        if (splited.length > 2) {
+            lastInUri = splited[splited.length - 1];
+        }
+
         // print uri
-        out.println(splited[splited.length - 1]);
+        out.println("Resultat : "+lastInUri);
     }
 }
