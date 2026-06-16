@@ -6,8 +6,6 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
-import mg.itu.framework.annotation.*;
-
 public class ClassUtil {
     // function to get class by package and annotation
     public static List<String> getClassByPackageAnnotation(String packageName, Class<? extends Annotation> annotation) throws Exception {
