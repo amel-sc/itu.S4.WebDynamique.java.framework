@@ -1,4 +1,4 @@
-package controller;
+package java.mg.itu.framework.controller;
 
 import java.io.*;
 import jakarta.servlet.*;
