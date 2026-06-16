@@ -10,7 +10,7 @@ import mg.itu.framework.annotation.*;
 
 public class ClassUtil {
     // function to get class by package and annotation
-    public List<String> getClassByPackageAnnotation(String packageName, Annotation annotation) throws Exception {
+    public static List<String> getClassByPackageAnnotation(String packageName, Class<? extends Annotation> annotation) throws Exception {
         List<String> classes = new ArrayList<String>();
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -36,7 +36,7 @@ public class ClassUtil {
                 
                 Class<?> temp_class = Class.forName(className);
 
-                if (temp_class.getAnnotation(Controller.class) != null) {
+                if (temp_class.getAnnotation(annotation) != null) {
                     classes.add(className);
                 }
             }

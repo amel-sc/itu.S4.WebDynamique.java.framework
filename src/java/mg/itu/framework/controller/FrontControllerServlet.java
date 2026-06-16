@@ -4,10 +4,25 @@ import java.io.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import mg.itu.framework.util.*;
+import mg.itu.framework.annotation.Controller;
 
 public class FrontControllerServlet extends HttpServlet {
     private List<String> listController;
+
+    public void init() throws ServletException {
+        listController = new ArrayList<String>();
+
+        try {
+            listController = ClassUtil.getClassByPackageAnnotation("controller", Controller.class);
+            
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("text/plain");
