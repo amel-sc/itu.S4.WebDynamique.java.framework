@@ -1,4 +1,4 @@
-package java.mg.itu.framework.annotation;
+package mg.itu.framework.annotation;
 
 public class Controller {
     
