@@ -4,7 +4,11 @@ import java.io.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
+import java.util.List;
+
 public class FrontControllerServlet extends HttpServlet {
+    private List<String> listController;
+
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("text/plain");
         
@@ -37,5 +41,11 @@ public class FrontControllerServlet extends HttpServlet {
 
         // print uri
         out.println("Resultat : "+lastInUri);
+
+        // show list of controller in package controller
+        out.println("Controller list : ");
+        for (int i = 0; i < listController.size(); i++) {
+            out.println((i+1)+" - "+listController.get(i));
+        }
     }
 }

@@ -23,7 +23,7 @@ public class ClassUtil {
         }
 
         File directory = new File(resource.toURI());
-        File[] files = directory.listFiles()
+        File[] files = directory.listFiles();
 
         if (files == null) {
             return classes;
