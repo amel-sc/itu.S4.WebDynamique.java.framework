@@ -1,10 +1,31 @@
-package controller;
+package mg.itu.framework.controller;
 
 import java.io.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import mg.itu.framework.util.*;
+import mg.itu.framework.annotation.Controller;
+
 public class FrontControllerServlet extends HttpServlet {
+    private List<String> listController;
+
+    public void init() throws ServletException {
+        listController = new ArrayList<String>();
+
+        String packageName = this.getInitParameter("packageName"); 
+
+        try {
+            listController = ClassUtil.getClassByPackageAnnotation(packageName, Controller.class);
+            
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
+
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("text/plain");
         
@@ -37,5 +58,11 @@ public class FrontControllerServlet extends HttpServlet {
 
         // print uri
         out.println("Resultat : "+lastInUri);
+
+        // show list of controller in package controller
+        out.println("Controller list : ");
+        for (int i = 0; i < listController.size(); i++) {
+            out.println((i+1)+" - "+listController.get(i));
+        }
     }
 }
