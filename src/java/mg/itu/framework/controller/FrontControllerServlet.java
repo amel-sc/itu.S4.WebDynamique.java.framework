@@ -69,10 +69,16 @@ public class FrontControllerServlet extends HttpServlet {
         // url wanted
         out.println("Url : "+afterUrl);
 
-        // show list of controller in package controller
-        out.println("Controller list : ");
-        for (int i = 0; i < listController.size(); i++) {
-            out.println((i+1)+" - "+listController.get(i));
+        out.println();
+        
+        out.println("Url with method : ");     
+        if (listUrl.containsKey(afterUrl)) {
+            out.println(afterUrl+" - "+listUrl.get(afterUrl).getDeclaringClass().getName()+" - "+listUrl.get(afterUrl).getName());
+        }
+        else {
+            for (String i : listUrl.keySet()) {
+                out.println(i+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
+            }   
         }
     }
 }
