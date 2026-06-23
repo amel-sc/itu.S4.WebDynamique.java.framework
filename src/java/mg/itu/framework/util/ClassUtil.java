@@ -8,8 +8,8 @@ import java.util.List;
 
 public class ClassUtil {
     // function to get class by package and annotation
-    public static List<String> getClassByPackageAnnotation(String packageName, Class<? extends Annotation> annotation) throws Exception {
-        List<String> classes = new ArrayList<String>();
+    public static List<Class<?>> getClassByPackageAnnotation(String packageName, Class<? extends Annotation> annotation) throws Exception {
+        List<Class<?>> classes = new ArrayList<Class<?>>();
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         String path = packageName.replace('.', '/');
@@ -35,7 +35,7 @@ public class ClassUtil {
                 Class<?> temp_class = Class.forName(className);
 
                 if (temp_class.getAnnotation(annotation) != null) {
-                    classes.add(className);
+                    classes.add(temp_class);
                 }
             }
         }

@@ -19,7 +19,10 @@ public class FrontControllerServlet extends HttpServlet {
         String packageName = this.getInitParameter("packageName"); 
 
         try {
-            listController = ClassUtil.getClassByPackageAnnotation(packageName, Controller.class);
+            List<Class<?>> listClassController = ClassUtil.getClassByPackageAnnotation(packageName, Controller.class);
+            for (int i = 0; i < listClassController.size(); i++) {
+                listController.add(listClassController.get(i).getSimpleName());
+            }
             
         } catch (Exception e) {
             throw new ServletException(e);
