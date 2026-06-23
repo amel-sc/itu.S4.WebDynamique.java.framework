@@ -57,7 +57,9 @@ public class ClassUtil {
 
             for (int j = 0; j < methods.length; j++) {
                 String temp_url = ClassUtil.findUrlByMethod(methods[j], annotation);
-                urlMapped.put(temp_url, methods[j]);
+                if (temp_url != null) {
+                    urlMapped.put(temp_url, methods[j]);
+                }
             }
         }
 
@@ -66,7 +68,7 @@ public class ClassUtil {
 
     // function to get annotation in method
     public static String findUrlByMethod(Method method, Class<? extends Annotation> annotation) {
-        String url = "";
+        String url = null;
 
         // get annotation of Method
         Annotation annot = method.getAnnotation(annotation);
