@@ -54,7 +54,14 @@ public class ClassUtil {
 
         for (int i = 0; i < controllers.size(); i++) {
             Method[] methods = controllers.get(i).getDeclaredMethods();
+
+            for (int j = 0; j < methods.length; j++) {
+                String temp_url = ClassUtil.findUrlByMethod(methods[i], annotation);
+                urlMapped.put(temp_url, methods[i]);
+            }
         }
+
+        return urlMapped;
     }
 
     // function to get annotation in method
