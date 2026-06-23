@@ -56,8 +56,8 @@ public class ClassUtil {
             Method[] methods = controllers.get(i).getDeclaredMethods();
 
             for (int j = 0; j < methods.length; j++) {
-                String temp_url = ClassUtil.findUrlByMethod(methods[i], annotation);
-                urlMapped.put(temp_url, methods[i]);
+                String temp_url = ClassUtil.findUrlByMethod(methods[j], annotation);
+                urlMapped.put(temp_url, methods[j]);
             }
         }
 
