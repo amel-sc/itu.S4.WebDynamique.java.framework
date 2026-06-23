@@ -3,8 +3,13 @@ package mg.itu.framework.util;
 import java.net.URL;
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import mg.itu.framework.annotation.UrlMapping;
 
 public class ClassUtil {
     // function to get class by package and annotation
@@ -41,5 +46,29 @@ public class ClassUtil {
         }
 
         return classes;
+    }
+
+    // function to findAllUrlMapping
+    public static Map<String, Method> findAllUrlMapping(List<Class<?>> controllers, Class<? extends Annotation> annotation) {
+        Map<String, Method> urlMapped = new HashMap<String, Method>();
+
+        for (int i = 0; i < controllers.size(); i++) {
+            Method[] methods = controllers.get(i).getDeclaredMethods();
+        }
+    }
+
+    // function to get annotation in method
+    public static String findUrlByMethod(Method method, Class<? extends Annotation> annotation) {
+        String url = "";
+
+        // get annotation of Method
+        Annotation annot = method.getAnnotation(annotation);
+        if (annot != null) {
+            if (annot instanceof UrlMapping) {
+                url = ((UrlMapping) annot).url();
+            }
+        }
+
+        return url;
     }
 }
