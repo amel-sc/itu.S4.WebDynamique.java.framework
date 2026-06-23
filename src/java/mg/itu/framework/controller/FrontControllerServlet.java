@@ -6,12 +6,17 @@ import jakarta.servlet.http.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import java.lang.reflect.Method;
 
 import mg.itu.framework.util.*;
 import mg.itu.framework.annotation.Controller;
+import mg.itu.framework.annotation.UrlMapping;
 
 public class FrontControllerServlet extends HttpServlet {
     private List<String> listController;
+    private Map<String, Method> listUrl;
 
     public void init() throws ServletException {
         listController = new ArrayList<String>();
@@ -19,7 +24,13 @@ public class FrontControllerServlet extends HttpServlet {
         String packageName = this.getInitParameter("packageName"); 
 
         try {
-            listController = ClassUtil.getClassByPackageAnnotation(packageName, Controller.class);
+            List<Class<?>> listClassController = ClassUtil.getClassByPackageAnnotation(packageName, Controller.class);
+            for (int i = 0; i < listClassController.size(); i++) {
+                listController.add(listClassController.get(i).getSimpleName());
+            }
+
+            // find all url
+            listUrl = ClassUtil.findAllUrlMapping(listClassController, UrlMapping.class);
             
         } catch (Exception e) {
             throw new ServletException(e);
@@ -50,19 +61,24 @@ public class FrontControllerServlet extends HttpServlet {
         // separate URI by /
         String[] splited = uri.split("/");
 
-        // get last in URI
-        String lastInUri = "";
-        if (splited.length > 2) {
-            lastInUri = splited[splited.length - 1];
+        // servlet name
+        String servletName = splited[1];
+        // get after url
+        String afterUrl = uri.substring(uri.indexOf(servletName) + servletName.length());
+    
+        // url wanted
+        out.println("Url : "+afterUrl);
+
+        out.println();
+        
+        out.println("Url with method : ");     
+        if (listUrl.containsKey(afterUrl)) {
+            out.println(afterUrl+" - "+listUrl.get(afterUrl).getDeclaringClass().getName()+" - "+listUrl.get(afterUrl).getName());
         }
-
-        // print uri
-        out.println("Resultat : "+lastInUri);
-
-        // show list of controller in package controller
-        out.println("Controller list : ");
-        for (int i = 0; i < listController.size(); i++) {
-            out.println((i+1)+" - "+listController.get(i));
+        else {
+            for (String i : listUrl.keySet()) {
+                out.println(i+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
+            }   
         }
     }
 }
