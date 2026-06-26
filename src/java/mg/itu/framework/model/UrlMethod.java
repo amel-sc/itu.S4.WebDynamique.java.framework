@@ -50,7 +50,7 @@ public class UrlMethod {
     public int hashCode() {
         return Objects.hash(
             this.url == null ? "" : this.url.trim().toLowerCase(), 
-            this.method == null ? "" : this.method.trim().toLowerCase();
+            this.method == null ? "" : this.method.trim().toLowerCase()
         );
     }
 }
