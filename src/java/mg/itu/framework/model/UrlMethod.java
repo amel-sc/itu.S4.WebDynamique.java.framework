@@ -1,5 +1,7 @@
 package mg.itu.framework.model;
 
+import java.util.Objects;
+
 public class UrlMethod {
     private String url;
     private String method;
@@ -41,5 +43,10 @@ public class UrlMethod {
         } 
 
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.url, this.method);
     }
 }
