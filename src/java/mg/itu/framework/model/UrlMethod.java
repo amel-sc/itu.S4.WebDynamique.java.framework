@@ -45,8 +45,12 @@ public class UrlMethod {
         return false;
     }
 
+    // hashCode for map
     @Override
     public int hashCode() {
-        return Objects.hash(this.url, this.method);
+        return Objects.hash(
+            this.url == null ? "" : this.url.trim().toLowerCase(), 
+            this.method == null ? "" : this.method.trim().toLowerCase();
+        );
     }
 }
