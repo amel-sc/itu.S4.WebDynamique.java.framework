@@ -1,9 +1,10 @@
-package java.mg.itu.framework.model;
+package mg.itu.framework.model;
 
 public class UrlMethod {
     private String url;
     private String method;
 
+    // getter / setter
     public String getUrl() {
         return url;
     }
@@ -14,6 +15,12 @@ public class UrlMethod {
         return method;
     }
     public void setMethod(String method) {
+        this.method = method;
+    }
+
+    // constructor
+    public UrlMethod(String url, String method) {
+        this.url = url;
         this.method = method;
     }
 

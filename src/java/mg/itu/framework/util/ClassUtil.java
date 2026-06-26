@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import mg.itu.framework.annotation.UrlMapping;
+import mg.itu.framework.model.UrlMethod;
 
 public class ClassUtil {
     // function to get class by package and annotation
@@ -67,13 +68,14 @@ public class ClassUtil {
     }
 
     // function to get annotation in method
-    public static String findUrlByMethod(Method method, Class<? extends Annotation> annotation) {
-        String url = null;
+    public static UrlMethod findUrlByMethod(Method method, Class<? extends Annotation> annotation) {
+        UrlMethod url = null;
 
         // get annotation of Method
         Annotation annot = method.getAnnotation(annotation);
         if (annot != null) {
             if (annot instanceof UrlMapping) {
+                url = new 
                 url = ((UrlMapping) annot).url();
             }
         }
