@@ -81,6 +81,16 @@ public class FrontControllerServlet extends HttpServlet {
         out.println("Url with method : ");     
         if (listUrl.containsKey(wantedUrlMethod)) {
             out.println(wantedUrlMethod.getUrl()+", "+wantedUrlMethod.getMethod()+" - "+listUrl.get(wantedUrlMethod).getDeclaringClass().getName()+" - "+listUrl.get(wantedUrlMethod).getName());
+
+            try {
+                // create new instance of controller
+                Object controller = listUrl.get(wantedUrlMethod).getDeclaringClass().getDeclaredConstructor().newInstance();
+                // invoke the method
+                listUrl.get(wantedUrlMethod).invoke(controller);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         else {
             for (UrlMethod i : listUrl.keySet()) {
