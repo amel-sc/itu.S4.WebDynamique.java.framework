@@ -13,10 +13,11 @@ import java.lang.reflect.Method;
 import mg.itu.framework.util.*;
 import mg.itu.framework.annotation.Controller;
 import mg.itu.framework.annotation.UrlMapping;
+import mg.itu.framework.model.UrlMethod;
 
 public class FrontControllerServlet extends HttpServlet {
     private List<String> listController;
-    private Map<String, Method> listUrl;
+    private Map<UrlMethod, Method> listUrl;
 
     public void init() throws ServletException {
         listController = new ArrayList<String>();
@@ -76,8 +77,8 @@ public class FrontControllerServlet extends HttpServlet {
             out.println(afterUrl+" - "+listUrl.get(afterUrl).getDeclaringClass().getName()+" - "+listUrl.get(afterUrl).getName());
         }
         else {
-            for (String i : listUrl.keySet()) {
-                out.println(i+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
+            for (UrlMethod i : listUrl.keySet()) {
+                out.println(i.getUrl()+", "+i.getMethod()+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
             }   
         }
     }
