@@ -50,16 +50,16 @@ public class ClassUtil {
     }
 
     // function to findAllUrlMapping
-    public static Map<String, Method> findAllUrlMapping(List<Class<?>> controllers, Class<? extends Annotation> annotation) {
-        Map<String, Method> urlMapped = new HashMap<String, Method>();
+    public static Map<UrlMethod, Method> findAllUrlMapping(List<Class<?>> controllers, Class<? extends Annotation> annotation) {
+        Map<UrlMethod, Method> urlMapped = new HashMap<UrlMethod, Method>();
 
         for (int i = 0; i < controllers.size(); i++) {
             Method[] methods = controllers.get(i).getDeclaredMethods();
 
             for (int j = 0; j < methods.length; j++) {
-                String temp_url = ClassUtil.findUrlByMethod(methods[j], annotation);
-                if (temp_url != null) {
-                    urlMapped.put(temp_url, methods[j]);
+                UrlMethod temp_urlMethod = ClassUtil.findUrlByMethod(methods[j], annotation);
+                if (temp_urlMethod != null) {
+                    urlMapped.put(temp_urlMethod, methods[j]);
                 }
             }
         }
@@ -75,8 +75,7 @@ public class ClassUtil {
         Annotation annot = method.getAnnotation(annotation);
         if (annot != null) {
             if (annot instanceof UrlMapping) {
-                url = new 
-                url = ((UrlMapping) annot).url();
+                url = new UrlMethod(((UrlMapping) annot).url(), ((UrlMapping) annot).method());
             }
         }
 
