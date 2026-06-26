@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import mg.itu.framework.annotation.UrlMapping;
+import mg.itu.framework.model.UrlMethod;
 
 public class ClassUtil {
     // function to get class by package and annotation
@@ -49,16 +50,16 @@ public class ClassUtil {
     }
 
     // function to findAllUrlMapping
-    public static Map<String, Method> findAllUrlMapping(List<Class<?>> controllers, Class<? extends Annotation> annotation) {
-        Map<String, Method> urlMapped = new HashMap<String, Method>();
+    public static Map<UrlMethod, Method> findAllUrlMapping(List<Class<?>> controllers, Class<? extends Annotation> annotation) {
+        Map<UrlMethod, Method> urlMapped = new HashMap<UrlMethod, Method>();
 
         for (int i = 0; i < controllers.size(); i++) {
             Method[] methods = controllers.get(i).getDeclaredMethods();
 
             for (int j = 0; j < methods.length; j++) {
-                String temp_url = ClassUtil.findUrlByMethod(methods[j], annotation);
-                if (temp_url != null) {
-                    urlMapped.put(temp_url, methods[j]);
+                UrlMethod temp_urlMethod = ClassUtil.findUrlByMethod(methods[j], annotation);
+                if (temp_urlMethod != null) {
+                    urlMapped.put(temp_urlMethod, methods[j]);
                 }
             }
         }
@@ -67,14 +68,14 @@ public class ClassUtil {
     }
 
     // function to get annotation in method
-    public static String findUrlByMethod(Method method, Class<? extends Annotation> annotation) {
-        String url = null;
+    public static UrlMethod findUrlByMethod(Method method, Class<? extends Annotation> annotation) {
+        UrlMethod url = null;
 
         // get annotation of Method
         Annotation annot = method.getAnnotation(annotation);
         if (annot != null) {
             if (annot instanceof UrlMapping) {
-                url = ((UrlMapping) annot).url();
+                url = new UrlMethod(((UrlMapping) annot).url(), ((UrlMapping) annot).method());
             }
         }
 
