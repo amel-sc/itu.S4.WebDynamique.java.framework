@@ -59,6 +59,9 @@ public class FrontControllerServlet extends HttpServlet {
         // get URI
         String uri = req.getRequestURI();
 
+        // get method
+        String method = req.getMethod();
+
         // separate URI by /
         String[] splited = uri.split("/");
 
@@ -67,14 +70,17 @@ public class FrontControllerServlet extends HttpServlet {
         // get after url
         String afterUrl = uri.substring(uri.indexOf(servletName) + servletName.length());
     
+        // create new UrlMethod object
+        UrlMethod wantedUrlMethod = new UrlMethod(afterUrl, method);
+
         // url wanted
-        out.println("Url : "+afterUrl);
+        out.println("Url : "+wantedUrlMethod.getUrl()+", "+"Method : "+wantedUrlMethod.getMethod());
 
         out.println();
         
         out.println("Url with method : ");     
-        if (listUrl.containsKey(afterUrl)) {
-            out.println(afterUrl+" - "+listUrl.get(afterUrl).getDeclaringClass().getName()+" - "+listUrl.get(afterUrl).getName());
+        if (listUrl.containsKey(wantedUrlMethod)) {
+            out.println(wantedUrlMethod.getUrl()+", "+wantedUrlMethod.getMethod()+" - "+listUrl.get(wantedUrlMethod).getDeclaringClass().getName()+" - "+listUrl.get(wantedUrlMethod).getName());
         }
         else {
             for (UrlMethod i : listUrl.keySet()) {
