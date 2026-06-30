@@ -13,6 +13,16 @@ import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 
 public class ClassUtil {
+    // function to get controller with MapUrl
+    public static List<Class<?>> getClassByPackageWithUrlMapping(String packageName, Class<? extends Annotation> annotation, Map<UrlMethod, Method> urlMapped) throws Exception {
+        // get classes via package name 
+        List<Class<?>> classes = ClassUtil.getClassByPackageAnnotation(packageName, annotation);
+        // get url with method
+        ClassUtil.findAllUrlMapping(classes, urlMapped);
+
+        return classes;
+    }
+
     // function to get class by package and annotation
     public static List<Class<?>> getClassByPackageAnnotation(String packageName, Class<? extends Annotation> annotation) throws Exception {
         List<Class<?>> classes = new ArrayList<Class<?>>();
@@ -50,29 +60,28 @@ public class ClassUtil {
     }
 
     // function to findAllUrlMapping
-    public static Map<UrlMethod, Method> findAllUrlMapping(List<Class<?>> controllers, Class<? extends Annotation> annotation) {
-        Map<UrlMethod, Method> urlMapped = new HashMap<UrlMethod, Method>();
-
+    public static void findAllUrlMapping(List<Class<?>> controllers, Map<UrlMethod, Method> urlMapped) throws Exception {
         for (int i = 0; i < controllers.size(); i++) {
             Method[] methods = controllers.get(i).getDeclaredMethods();
 
             for (int j = 0; j < methods.length; j++) {
-                UrlMethod temp_urlMethod = ClassUtil.findUrlByMethod(methods[j], annotation);
+                UrlMethod temp_urlMethod = ClassUtil.findUrlByMethod(methods[j]);
                 if (temp_urlMethod != null) {
+                    if (urlMapped.containsKey(temp_urlMethod)) {
+                        throw new Exception("Url : "+temp_urlMethod.getUrl()+", Method : "+temp_urlMethod.getMethod()+" : exsite déjà");
+                    }
                     urlMapped.put(temp_urlMethod, methods[j]);
                 }
             }
         }
-
-        return urlMapped;
     }
 
     // function to get annotation in method
-    public static UrlMethod findUrlByMethod(Method method, Class<? extends Annotation> annotation) {
+    public static UrlMethod findUrlByMethod(Method method) {
         UrlMethod url = null;
 
         // get annotation of Method
-        Annotation annot = method.getAnnotation(annotation);
+        UrlMapping annot = method.getAnnotation(UrlMapping.class);
         if (annot != null) {
             if (annot instanceof UrlMapping) {
                 url = new UrlMethod(((UrlMapping) annot).url(), ((UrlMapping) annot).method());
