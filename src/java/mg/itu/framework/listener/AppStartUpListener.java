@@ -32,7 +32,7 @@ public class AppStartUpListener implements ServletContextListener {
             sce.getServletContext().setAttribute("listController", this.listController);
             sce.getServletContext().setAttribute("listUrl", this.listUrl);
         } catch (Exception e) {
-            throw new Exception(e);
+            e.printStackTrace();
         }
     }
 

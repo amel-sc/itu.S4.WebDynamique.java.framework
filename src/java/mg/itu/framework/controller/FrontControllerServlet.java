@@ -22,8 +22,8 @@ public class FrontControllerServlet extends HttpServlet {
 
     public void init() throws ServletException {
         try {
-            this.listController = (List<String>) getContextServlet().getAttribute("listController");
-            this.listUrl = (Map<UrlMethod, Method>) getContextServlet().getAttribute("listUrl");
+            this.listController = (List<String>) this.getServletContext().getAttribute("listController");
+            this.listUrl = (Map<UrlMethod, Method>) this.getServletContext().getAttribute("listUrl");
         } catch (Exception e) {
             throw new ServletException(e);
         }
