@@ -1,10 +1,11 @@
 package mg.itu.framework.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAndView {
     private String view;
-    private Map<String, Object> model;
+    private Map<String, Object> model = new HashMap<String, Object>();
 
     // getters / setters
     public String getView() {

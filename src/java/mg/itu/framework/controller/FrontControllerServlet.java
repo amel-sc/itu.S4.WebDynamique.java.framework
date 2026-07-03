@@ -100,7 +100,7 @@ public class FrontControllerServlet extends HttpServlet {
                 }
 
             } catch (Exception e) {
-                System.out.println(e);
+                System.out.println(e.getCause());
             }
         }
         else {
