@@ -19,4 +19,9 @@ public class ModelAndView {
     public void setModel(Map<String, Object> model) {
         this.model = model;
     }
+
+    // function to add attribute in model
+    public void setAttribute(String name, Object object) {
+        this.model.put(name, object);
+    }
 }
