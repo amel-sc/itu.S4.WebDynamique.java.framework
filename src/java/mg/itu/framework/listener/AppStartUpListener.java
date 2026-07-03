@@ -27,6 +27,7 @@ public class AppStartUpListener implements ServletContextListener {
             // save values in context
             sce.getServletContext().setAttribute("listUrl", this.listUrl);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
            throw new RuntimeException(e);
         }
     }
