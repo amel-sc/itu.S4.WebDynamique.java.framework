@@ -17,12 +17,10 @@ import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 
 public class FrontControllerServlet extends HttpServlet {
-    private List<String> listController;
     private Map<UrlMethod, Method> listUrl;
 
     public void init() throws ServletException {
         try {
-            this.listController = (List<String>) this.getServletContext().getAttribute("listController");
             this.listUrl = (Map<UrlMethod, Method>) this.getServletContext().getAttribute("listUrl");
         } catch (Exception e) {
             throw new ServletException(e);

@@ -24,12 +24,7 @@ public class AppStartUpListener implements ServletContextListener {
         // get list url
         try {
             List<Class<?>> listClassController = ClassUtil.getClassByPackageWithUrlMapping(packageName, Controller.class, listUrl);
-            for (int i = 0; i < listClassController.size(); i++) {
-                listController.add(listClassController.get(i).getSimpleName());
-            }
-
             // save values in context
-            sce.getServletContext().setAttribute("listController", this.listController);
             sce.getServletContext().setAttribute("listUrl", this.listUrl);
         } catch (Exception e) {
            throw new RuntimeException(e);
