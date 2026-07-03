@@ -15,6 +15,7 @@ import mg.itu.framework.util.*;
 import mg.itu.framework.annotation.Controller;
 import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
+import mg.itu.framework.model.ModelAndView;
 
 public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
@@ -70,6 +71,12 @@ public class FrontControllerServlet extends HttpServlet {
         out.println("Url with method : ");     
         if (listUrl.containsKey(wantedUrlMethod)) {
             out.println(wantedUrlMethod.getUrl()+", "+wantedUrlMethod.getMethod()+" - "+listUrl.get(wantedUrlMethod).getDeclaringClass().getName()+" - "+listUrl.get(wantedUrlMethod).getName());
+
+            // get prefixe and suffixe
+            String prefixe = this.getInitParameter("prefixe");
+            String suffixe = this.getInitParameter("suffixe");
+
+            out.println("prefixe : "+prefixe+", suffixe : "+suffixe);
 
             try {
                 // create new instance of controller
