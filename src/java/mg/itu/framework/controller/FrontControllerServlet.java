@@ -79,22 +79,28 @@ public class FrontControllerServlet extends HttpServlet {
             try {
                 // create new instance of controller
                 Object controller = listUrl.get(wantedUrlMethod).getDeclaringClass().getDeclaredConstructor().newInstance();
-                // invoke the method
-                ModelAndView modelAndView = (ModelAndView) listUrl.get(wantedUrlMethod).invoke(controller);
-                // url for wanted view
-                String view_path = prefixe + modelAndView.getView() + suffixe;
 
-                // add model in request
-                for (String key : modelAndView.getModel().keySet()) {
-                    req.setAttribute(key, modelAndView.getModel().get(key));
+                if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
+                    // invoke the method
+                    ModelAndView modelAndView = (ModelAndView) listUrl.get(wantedUrlMethod).invoke(controller);
+                    // url for wanted view
+                    String view_path = prefixe + modelAndView.getView() + suffixe;
+                    
+                    // add model in request
+                    for (String key : modelAndView.getModel().keySet()) {
+                        req.setAttribute(key, modelAndView.getModel().get(key));
+                    }
+    
+                    // forward dispatcher
+                    RequestDispatcher dispat = req.getRequestDispatcher(view_path);
+                    dispat.forward(req, res);
+                }
+                else {
+                    throw new Exception("La methode voulue ne retourne pas un Objet de type ModelAndView");
                 }
 
-                // forward dispatcher
-                RequestDispatcher dispat = req.getRequestDispatcher(view_path);
-                dispat.forward(req, res);
-
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(e);
             }
         }
         else {
