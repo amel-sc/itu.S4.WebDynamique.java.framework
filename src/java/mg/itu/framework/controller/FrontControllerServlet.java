@@ -17,19 +17,11 @@ import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 
 public class FrontControllerServlet extends HttpServlet {
-    private List<String> listController;
-    private Map<UrlMethod, Method> listUrl = new HashMap<UrlMethod, Method>();
+    private Map<UrlMethod, Method> listUrl;
 
     public void init() throws ServletException {
-        listController = new ArrayList<String>();
-
-        String packageName = this.getInitParameter("packageName"); 
-
         try {
-            List<Class<?>> listClassController = ClassUtil.getClassByPackageWithUrlMapping(packageName,  Controller.class, listUrl);
-            for (int i = 0; i < listClassController.size(); i++) {
-                listController.add(listClassController.get(i).getSimpleName());
-            }            
+            this.listUrl = (Map<UrlMethod, Method>) this.getServletContext().getAttribute("listUrl");
         } catch (Exception e) {
             throw new ServletException(e);
         }
