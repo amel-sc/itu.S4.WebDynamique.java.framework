@@ -76,14 +76,23 @@ public class FrontControllerServlet extends HttpServlet {
             String prefixe = this.getInitParameter("prefixe");
             String suffixe = this.getInitParameter("suffixe");
 
-            out.println("prefixe : "+prefixe+", suffixe : "+suffixe);
-
             try {
                 // create new instance of controller
                 Object controller = listUrl.get(wantedUrlMethod).getDeclaringClass().getDeclaredConstructor().newInstance();
                 // invoke the method
-                listUrl.get(wantedUrlMethod).invoke(controller);
-                
+                ModelAndView modelAndView = (ModelAndView) listUrl.get(wantedUrlMethod).invoke(controller);
+                // url for wanted view
+                String view_path = prefixe + modelAndView.getView() + suffixe;
+
+                // add model in request
+                for (String key : modelAndView.getModel().keySet()) {
+                    req.setAttribute(key, modelAndView.getModel().get(key));
+                }
+
+                // forward dispatcher
+                RequestDispatcher dispat = req.getRequestDispatcher(view_path);
+                dispat.forward(req, res);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
