@@ -19,10 +19,14 @@ import mg.itu.framework.model.ModelAndView;
 
 public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
+    private String prefixe;
+    private String suffixe;
 
     public void init() throws ServletException {
         try {
             this.listUrl = (Map<UrlMethod, Method>) this.getServletContext().getAttribute("listUrl");
+            this.prefixe = (String) this.getServletContext().getAttribute("prefixe");
+            this.suffixe = (String) this.getServletContext().getAttribute("suffixe");
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -72,10 +76,6 @@ public class FrontControllerServlet extends HttpServlet {
         if (listUrl.containsKey(wantedUrlMethod)) {
             out.println(wantedUrlMethod.getUrl()+", "+wantedUrlMethod.getMethod()+" - "+listUrl.get(wantedUrlMethod).getDeclaringClass().getName()+" - "+listUrl.get(wantedUrlMethod).getName());
 
-            // get prefixe and suffixe
-            String prefixe = this.getInitParameter("prefixe");
-            String suffixe = this.getInitParameter("suffixe");
-
             try {
                 // create new instance of controller
                 Object controller = listUrl.get(wantedUrlMethod).getDeclaringClass().getDeclaredConstructor().newInstance();
@@ -84,7 +84,7 @@ public class FrontControllerServlet extends HttpServlet {
                     // invoke the method
                     ModelAndView modelAndView = (ModelAndView) listUrl.get(wantedUrlMethod).invoke(controller);
                     // url for wanted view
-                    String view_path = prefixe + modelAndView.getView() + suffixe;
+                    String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
                     
                     // add model in request
                     for (String key : modelAndView.getModel().keySet()) {
