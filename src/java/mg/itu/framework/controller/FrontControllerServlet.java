@@ -4,7 +4,7 @@ import java.io.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
     private String prefixe;
     private String suffixe;
-    private WebApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     public void init() throws ServletException {
         ServletContext servletContext = this.getServletContext();
@@ -33,7 +33,8 @@ public class FrontControllerServlet extends HttpServlet {
             this.listUrl = (Map<UrlMethod, Method>) servletContext.getAttribute("listUrl");
             this.prefixe = (String) servletContext.getAttribute("prefixe");
             this.suffixe = (String) servletContext.getAttribute("suffixe");
-            this.applicationContext = (WebApplicationContext) servletContext.getAttribute("applicationContext");
+            // get spring context
+            this.applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -62,6 +63,8 @@ public class FrontControllerServlet extends HttpServlet {
         String contextPath = req.getContextPath();
         // get after url
         String afterUrl = uri.substring(contextPath.length());
+
+        out.println(afterUrl);
 
         // get method
         String method = req.getMethod();
@@ -105,8 +108,8 @@ public class FrontControllerServlet extends HttpServlet {
                 if (parameters.length == 0) {
                     modelAndView = (ModelAndView) mappedMethod.invoke(controller);
                 }
-                else if (parameters.length == 1 && parameters[0].isInstance(applicationContext)) {
-                    modelAndView = (ModelAndView) mappedMethod.invoke(controller, applicationContext);
+                else if (parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
+                    modelAndView = (ModelAndView) mappedMethod.invoke(controller, this.applicationContext);
                 }
                 else {
                     throw new Exception("La méthode vulue n'a pas de paramètre 'applicationContext'");
