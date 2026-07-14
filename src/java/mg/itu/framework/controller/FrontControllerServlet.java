@@ -56,17 +56,12 @@ public class FrontControllerServlet extends HttpServlet {
 
         // get URI
         String uri = req.getRequestURI();
+        String contextPath = req.getContextPath();
+        // get after url
+        String afterUrl = uri.substring(contextPath.length());
 
         // get method
         String method = req.getMethod();
-
-        // separate URI by /
-        String[] splited = uri.split("/");
-
-        // servlet name
-        String servletName = splited[1];
-        // get after url
-        String afterUrl = uri.substring(uri.indexOf(servletName) + servletName.length());
     
         // create new UrlMethod object
         UrlMethod wantedUrlMethod = new UrlMethod(afterUrl, method);
