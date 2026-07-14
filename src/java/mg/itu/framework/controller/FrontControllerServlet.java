@@ -87,12 +87,16 @@ public class FrontControllerServlet extends HttpServlet {
     // function to execute wantedUrlMethod
     public void executeUrlMethod(HttpServletRequest req, HttpServletResponse res, UrlMethod wantedUrlMethod) {
         try {
+            // get method
+            Method mappedMethod = listUrl.get(wantedUrlMethod);
+            // get class controller
+            Class<?> controllerClass = mappedMethod.getDeclaringClass();
             // create new instance of controller
-            Object controller = listUrl.get(wantedUrlMethod).getDeclaringClass().getDeclaredConstructor().newInstance();
+            Object controller = this.applicationContext.getBean(controllerClass);
 
             if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
                 // invoke the method
-                ModelAndView modelAndView = (ModelAndView) listUrl.get(wantedUrlMethod).invoke(controller);
+                ModelAndView modelAndView = (ModelAndView) mappedMethod.invoke(controller);
                 // url for wanted view
                 String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
                 
