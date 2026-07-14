@@ -92,11 +92,22 @@ public class FrontControllerServlet extends HttpServlet {
             // get class controller
             Class<?> controllerClass = mappedMethod.getDeclaringClass();
             // create new instance of controller
-            Object controller = this.applicationContext.getBean(controllerClass);
+            Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
             if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
+                // get list of parameters types for method
+                Class<?>[] parameters = mappedMethod.getParameterTypes();
                 // invoke the method
-                ModelAndView modelAndView = (ModelAndView) mappedMethod.invoke(controller);
+                ModelAndView modelAndView = null;
+                if (parameters.length == 0) {
+                    modelAndView = (ModelAndView) mappedMethod.invoke(controller);
+                }
+                else if (parameters.length == 1 && parameters[0].isInstance(applicationContext)) {
+                    modelAndView = (ModelAndView) mappedMethod.invoke(controller, applicationContext);
+                }
+                else {
+                    throw new Exception("La méthode vulue n'a pas de paramètre 'applicationContext'");
+                }
                 // url for wanted view
                 String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
                 
@@ -110,7 +121,7 @@ public class FrontControllerServlet extends HttpServlet {
                 dispat.forward(req, res);
             }
             else {
-                throw new Exception("La methode voulue ne retourne pas un Objet de type ModelAndView");
+                throw new Exception("La méthode voulue ne retourne pas un Objet de type ModelAndView");
             }
 
         } catch (Exception e) {
