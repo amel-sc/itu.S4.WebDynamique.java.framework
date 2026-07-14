@@ -19,20 +19,27 @@ public class AppStartUpListener implements ServletContextListener {
     private Map<UrlMethod, Method> listUrl = new HashMap<UrlMethod, Method>();
     private String prefixe;
     private String suffixe;
+    // context for spring
+    private WebApplicationContext applicationContext;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        String packageName = sce.getServletContext().getInitParameter("packageName");
-        prefixe = sce.getServletContext().getInitParameter("prefixe");
-        suffixe = sce.getServletContext().getInitParameter("suffixe");
+        ServletContext servletContext = sce.getServletContext();
+
+        String packageName = servletContext.getInitParameter("packageName");
+        this.prefixe = servletContext.getInitParameter("prefixe");
+        this.suffixe = servletContext.getInitParameter("suffixe");
+        // get spring context
+        this.applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
 
         // get list url
         try {
             List<Class<?>> listClassController = ClassUtil.getClassByPackageWithUrlMapping(packageName, Controller.class, listUrl);
             // save values in context
-            sce.getServletContext().setAttribute("listUrl", this.listUrl);
-            sce.getServletContext().setAttribute("prefixe", prefixe);
-            sce.getServletContext().setAttribute("suffixe", suffixe);
+            servletContext.setAttribute("listUrl", this.listUrl);
+            servletContext.setAttribute("prefixe", this.prefixe);
+            servletContext.setAttribute("suffixe", this.suffixe);
+            servletContext.setAttribute("applicationContexte", this.applicationContext);
         } catch (Exception e) {
             System.out.println(e.getMessage());
            throw new RuntimeException(e);

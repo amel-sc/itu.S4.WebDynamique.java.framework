@@ -21,12 +21,16 @@ public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
     private String prefixe;
     private String suffixe;
+    private WebApplicationContext applicationContext;
 
     public void init() throws ServletException {
+        ServletContext servletContext = this.getServletContext();
+
         try {
-            this.listUrl = (Map<UrlMethod, Method>) this.getServletContext().getAttribute("listUrl");
-            this.prefixe = (String) this.getServletContext().getAttribute("prefixe");
-            this.suffixe = (String) this.getServletContext().getAttribute("suffixe");
+            this.listUrl = (Map<UrlMethod, Method>) servletContext.getAttribute("listUrl");
+            this.prefixe = (String) servletContext.getAttribute("prefixe");
+            this.suffixe = (String) servletContext.getAttribute("suffixe");
+            this.applicationContext = (WebApplicationContext) servletContext.getAttribute("applicationContext");
         } catch (Exception e) {
             throw new ServletException(e);
         }
