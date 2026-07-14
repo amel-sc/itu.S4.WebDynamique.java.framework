@@ -15,13 +15,18 @@ import mg.itu.framework.util.*;
 import mg.itu.framework.annotation.Controller;
 import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
+import mg.itu.framework.model.ModelAndView;
 
 public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
+    private String prefixe;
+    private String suffixe;
 
     public void init() throws ServletException {
         try {
             this.listUrl = (Map<UrlMethod, Method>) this.getServletContext().getAttribute("listUrl");
+            this.prefixe = (String) this.getServletContext().getAttribute("prefixe");
+            this.suffixe = (String) this.getServletContext().getAttribute("suffixe");
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -74,11 +79,28 @@ public class FrontControllerServlet extends HttpServlet {
             try {
                 // create new instance of controller
                 Object controller = listUrl.get(wantedUrlMethod).getDeclaringClass().getDeclaredConstructor().newInstance();
-                // invoke the method
-                listUrl.get(wantedUrlMethod).invoke(controller);
-                
+
+                if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
+                    // invoke the method
+                    ModelAndView modelAndView = (ModelAndView) listUrl.get(wantedUrlMethod).invoke(controller);
+                    // url for wanted view
+                    String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
+                    
+                    // add model in request
+                    for (String key : modelAndView.getModel().keySet()) {
+                        req.setAttribute(key, modelAndView.getModel().get(key));
+                    }
+    
+                    // forward dispatcher
+                    RequestDispatcher dispat = req.getRequestDispatcher(view_path);
+                    dispat.forward(req, res);
+                }
+                else {
+                    throw new Exception("La methode voulue ne retourne pas un Objet de type ModelAndView");
+                }
+
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(e.getCause());
             }
         }
         else {

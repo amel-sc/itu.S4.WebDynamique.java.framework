@@ -17,15 +17,22 @@ import mg.itu.framework.annotation.*;
 public class AppStartUpListener implements ServletContextListener {
     private List<String> listController = new ArrayList<String>();
     private Map<UrlMethod, Method> listUrl = new HashMap<UrlMethod, Method>();
+    private String prefixe;
+    private String suffixe;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         String packageName = sce.getServletContext().getInitParameter("packageName");
+        prefixe = sce.getServletContext().getInitParameter("prefixe");
+        suffixe = sce.getServletContext().getInitParameter("suffixe");
+
         // get list url
         try {
             List<Class<?>> listClassController = ClassUtil.getClassByPackageWithUrlMapping(packageName, Controller.class, listUrl);
             // save values in context
             sce.getServletContext().setAttribute("listUrl", this.listUrl);
+            sce.getServletContext().setAttribute("prefixe", prefixe);
+            sce.getServletContext().setAttribute("suffixe", suffixe);
         } catch (Exception e) {
             System.out.println(e.getMessage());
            throw new RuntimeException(e);
