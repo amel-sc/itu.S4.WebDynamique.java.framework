@@ -23,16 +23,15 @@ public class AppStartUpListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         String packageName = sce.getServletContext().getInitParameter("packageName");
-        prefixe = sce.getServletContext().getInitParameter("prefixe");
-        suffixe = sce.getServletContext().getInitParameter("suffixe");
-
+        this.prefixe = sce.getServletContext().getInitParameter("prefixe");
+        this.suffixe = sce.getServletContext().getInitParameter("suffixe");
         // get list url
         try {
             List<Class<?>> listClassController = ClassUtil.getClassByPackageWithUrlMapping(packageName, Controller.class, listUrl);
             // save values in context
             sce.getServletContext().setAttribute("listUrl", this.listUrl);
-            sce.getServletContext().setAttribute("prefixe", prefixe);
-            sce.getServletContext().setAttribute("suffixe", suffixe);
+            sce.getServletContext().setAttribute("prefixe", this.prefixe);
+            sce.getServletContext().setAttribute("suffixe", this.suffixe);
         } catch (Exception e) {
             System.out.println(e.getMessage());
            throw new RuntimeException(e);

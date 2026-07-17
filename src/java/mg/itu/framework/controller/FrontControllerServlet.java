@@ -4,6 +4,9 @@ import java.io.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,12 +24,17 @@ public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
     private String prefixe;
     private String suffixe;
+    private ApplicationContext applicationContext;
 
     public void init() throws ServletException {
+        ServletContext servletContext = this.getServletContext();
+
         try {
-            this.listUrl = (Map<UrlMethod, Method>) this.getServletContext().getAttribute("listUrl");
-            this.prefixe = (String) this.getServletContext().getAttribute("prefixe");
-            this.suffixe = (String) this.getServletContext().getAttribute("suffixe");
+            this.listUrl = (Map<UrlMethod, Method>) servletContext.getAttribute("listUrl");
+            this.prefixe = (String) servletContext.getAttribute("prefixe");
+            this.suffixe = (String) servletContext.getAttribute("suffixe");
+            // get spring context
+            this.applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -52,17 +60,14 @@ public class FrontControllerServlet extends HttpServlet {
 
         // get URI
         String uri = req.getRequestURI();
+        String contextPath = req.getContextPath();
+        // get after url
+        String afterUrl = uri.substring(contextPath.length());
+
+        out.println(afterUrl);
 
         // get method
         String method = req.getMethod();
-
-        // separate URI by /
-        String[] splited = uri.split("/");
-
-        // servlet name
-        String servletName = splited[1];
-        // get after url
-        String afterUrl = uri.substring(uri.indexOf(servletName) + servletName.length());
     
         // create new UrlMethod object
         UrlMethod wantedUrlMethod = new UrlMethod(afterUrl, method);
@@ -76,37 +81,57 @@ public class FrontControllerServlet extends HttpServlet {
         if (listUrl.containsKey(wantedUrlMethod)) {
             out.println(wantedUrlMethod.getUrl()+", "+wantedUrlMethod.getMethod()+" - "+listUrl.get(wantedUrlMethod).getDeclaringClass().getName()+" - "+listUrl.get(wantedUrlMethod).getName());
 
-            try {
-                // create new instance of controller
-                Object controller = listUrl.get(wantedUrlMethod).getDeclaringClass().getDeclaredConstructor().newInstance();
-
-                if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
-                    // invoke the method
-                    ModelAndView modelAndView = (ModelAndView) listUrl.get(wantedUrlMethod).invoke(controller);
-                    // url for wanted view
-                    String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
-                    
-                    // add model in request
-                    for (String key : modelAndView.getModel().keySet()) {
-                        req.setAttribute(key, modelAndView.getModel().get(key));
-                    }
-    
-                    // forward dispatcher
-                    RequestDispatcher dispat = req.getRequestDispatcher(view_path);
-                    dispat.forward(req, res);
-                }
-                else {
-                    throw new Exception("La methode voulue ne retourne pas un Objet de type ModelAndView");
-                }
-
-            } catch (Exception e) {
-                System.out.println(e.getCause());
-            }
+            this.executeUrlMethod(req, res, wantedUrlMethod);
         }
         else {
             for (UrlMethod i : listUrl.keySet()) {
                 out.println(i.getUrl()+", "+i.getMethod()+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
             }   
+        }
+    }
+
+    // function to execute wantedUrlMethod
+    public void executeUrlMethod(HttpServletRequest req, HttpServletResponse res, UrlMethod wantedUrlMethod) {
+        try {
+            // get method
+            Method mappedMethod = listUrl.get(wantedUrlMethod);
+            // get class controller
+            Class<?> controllerClass = mappedMethod.getDeclaringClass();
+            // create new instance of controller
+            Object controller = controllerClass.getDeclaredConstructor().newInstance();
+
+            if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
+                // get list of parameters types for method
+                Class<?>[] parameters = mappedMethod.getParameterTypes();
+                // invoke the method
+                ModelAndView modelAndView = null;
+                if (parameters.length == 0) {
+                    modelAndView = (ModelAndView) mappedMethod.invoke(controller);
+                }
+                else if (parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
+                    modelAndView = (ModelAndView) mappedMethod.invoke(controller, this.applicationContext);
+                }
+                else {
+                    throw new Exception("La méthode vulue n'a pas de paramètre 'applicationContext'");
+                }
+                // url for wanted view
+                String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
+                
+                // add model in request
+                for (String key : modelAndView.getModel().keySet()) {
+                    req.setAttribute(key, modelAndView.getModel().get(key));
+                }
+
+                // forward dispatcher
+                RequestDispatcher dispat = req.getRequestDispatcher(view_path);
+                dispat.forward(req, res);
+            }
+            else {
+                throw new Exception("La méthode voulue ne retourne pas un Objet de type ModelAndView");
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getCause());
         }
     }
 }
