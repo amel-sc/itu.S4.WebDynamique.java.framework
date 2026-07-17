@@ -34,7 +34,7 @@ public class FrontControllerServlet extends HttpServlet {
             this.prefixe = (String) servletContext.getAttribute("prefixe");
             this.suffixe = (String) servletContext.getAttribute("suffixe");
             // get spring context
-            this.applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+            this.applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -108,11 +108,11 @@ public class FrontControllerServlet extends HttpServlet {
                 if (parameters.length == 0) {
                     modelAndView = (ModelAndView) mappedMethod.invoke(controller);
                 }
-                else if (parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
+                else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
                     modelAndView = (ModelAndView) mappedMethod.invoke(controller, this.applicationContext);
                 }
                 else {
-                    throw new Exception("La méthode vulue n'a pas de paramètre 'applicationContext'");
+                    throw new Exception("La méthode voulue est invalide");
                 }
                 // url for wanted view
                 String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
