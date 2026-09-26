@@ -19,6 +19,7 @@ import mg.itu.framework.annotation.Controller;
 import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 import mg.itu.framework.model.ModelAndView;
+import com.google.gson.Gson;
 
 public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
@@ -54,8 +55,8 @@ public class FrontControllerServlet extends HttpServlet {
         this.processRequest(req, res);
     }
 
-    // function to get uri 
-    public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    // function to get uri (with PrintWriter)
+    public void processRequestWithPrintWriter(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         PrintWriter out = res.getWriter();
 
         // get URI
@@ -90,6 +91,31 @@ public class FrontControllerServlet extends HttpServlet {
         }
     }
 
+     // function to get uri 
+    public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        PrintWriter out = res.getWriter();
+        // get URI
+        String uri = req.getRequestURI();
+        String contextPath = req.getContextPath();
+        // get after url
+        String afterUrl = uri.substring(contextPath.length());
+
+        // get method
+        String method = req.getMethod();
+    
+        // create new UrlMethod object
+        UrlMethod wantedUrlMethod = new UrlMethod(afterUrl, method);
+
+        if (listUrl.containsKey(wantedUrlMethod)) {
+            this.executeUrlMethod(req, res, wantedUrlMethod);
+        }
+        else {
+            for (UrlMethod i : listUrl.keySet()) {
+                out.println(i.getUrl()+", "+i.getMethod()+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
+            }   
+        }
+    }
+
     // function to execute wantedUrlMethod
     public void executeUrlMethod(HttpServletRequest req, HttpServletResponse res, UrlMethod wantedUrlMethod) {
         try {
@@ -100,38 +126,86 @@ public class FrontControllerServlet extends HttpServlet {
             // create new instance of controller
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
-            if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
-                // get list of parameters types for method
-                Class<?>[] parameters = mappedMethod.getParameterTypes();
-                // invoke the method
-                ModelAndView modelAndView = null;
-                if (parameters.length == 0) {
-                    modelAndView = (ModelAndView) mappedMethod.invoke(controller);
-                }
-                else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
-                    modelAndView = (ModelAndView) mappedMethod.invoke(controller, this.applicationContext);
+            if (ClassUtil.HasAnnotation(mappedMethod)) {
+                if (!(listUrl.get(wantedUrlMethod).getReturnType() == void.class)) {
+                    executeUrlWithJson(req, res, mappedMethod, controller);
                 }
                 else {
-                    throw new Exception("La méthode voulue est invalide");
+                    throw new Exception("La méthode ne peux pas retourner du JSON");
                 }
-                // url for wanted view
-                String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
-                
-                // add model in request
-                for (String key : modelAndView.getModel().keySet()) {
-                    req.setAttribute(key, modelAndView.getModel().get(key));
-                }
-
-                // forward dispatcher
-                RequestDispatcher dispat = req.getRequestDispatcher(view_path);
-                dispat.forward(req, res);
             }
             else {
-                throw new Exception("La méthode voulue ne retourne pas un Objet de type ModelAndView");
+                if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
+                    executeUrlNoJson(req, res, mappedMethod, controller);
+                }
+                else {
+                    throw new Exception("La méthode voulue ne retourne pas un Objet de type ModelAndView");
+                }
             }
 
         } catch (Exception e) {
             System.out.println(e.getCause());
+        }
+    }
+
+    // function to execute request without json
+    public void executeUrlNoJson(HttpServletRequest req, HttpServletResponse res, Method mappedMethod, Object controller) throws Exception {
+        try {
+            // get list of parameters types for method
+            Class<?>[] parameters = mappedMethod.getParameterTypes();
+            // invoke the method
+            ModelAndView modelAndView = null;
+            if (parameters.length == 0) {
+                modelAndView = (ModelAndView) mappedMethod.invoke(controller);
+            }
+            else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
+                modelAndView = (ModelAndView) mappedMethod.invoke(controller, this.applicationContext);
+            }
+            else {
+                throw new Exception("La méthode voulue est invalide");
+            }
+            // url for wanted view
+            String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
+            
+            // add model in request
+            for (String key : modelAndView.getModel().keySet()) {
+                req.setAttribute(key, modelAndView.getModel().get(key));
+            }
+
+            // forward dispatcher
+            RequestDispatcher dispat = req.getRequestDispatcher(view_path);
+            dispat.forward(req, res);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    // function to execute request with json
+    public void executeUrlWithJson(HttpServletRequest req, HttpServletResponse res, Method mappedMethod, Object controller) throws Exception {
+        try {
+            PrintWriter out = res.getWriter();
+            // set coontent type to return JSON
+            res.setContentType("application/json");
+            // get list of parameters types for method
+            Class<?>[] parameters = mappedMethod.getParameterTypes();
+            // invoke method
+            Object jsonResult = null;
+            if (parameters.length == 0) {
+                jsonResult = mappedMethod.invoke(controller);
+            }
+            else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
+                jsonResult = mappedMethod.invoke(controller, this.applicationContext);
+            }
+            // verify if result is a string or an Object
+            if (!(jsonResult instanceof String)) {
+                Gson gson = new Gson();
+                jsonResult = gson.toJson(jsonResult);
+            }
+
+            out.println(jsonResult);
+
+        } catch (Exception e) {
+            throw e;
         }
     }
 }
