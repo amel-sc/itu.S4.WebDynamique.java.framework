@@ -113,30 +113,35 @@ public class FrontControllerServlet extends HttpServlet {
     }
 
     // function to execute request without json
-    public void executeUrlNoJson(HttpServletRequest req, HttpServletResponse res, Method mappedMethod, Object controller) {
-        // get list of parameters types for method
-        Class<?>[] parameters = mappedMethod.getParameterTypes();
-        // invoke the method
-        ModelAndView modelAndView = null;
-        if (parameters.length == 0) {
-            modelAndView = (ModelAndView) mappedMethod.invoke(controller);
-        }
-        else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
-            modelAndView = (ModelAndView) mappedMethod.invoke(controller, this.applicationContext);
-        }
-        else {
-            throw new Exception("La méthode voulue est invalide");
-        }
-        // url for wanted view
-        String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
-        
-        // add model in request
-        for (String key : modelAndView.getModel().keySet()) {
-            req.setAttribute(key, modelAndView.getModel().get(key));
-        }
+    public void executeUrlNoJson(HttpServletRequest req, HttpServletResponse res, Method mappedMethod, Object controller) throws Exception {
+        try {
+            // get list of parameters types for method
+            Class<?>[] parameters = mappedMethod.getParameterTypes();
+            // invoke the method
+            ModelAndView modelAndView = null;
+            if (parameters.length == 0) {
+                modelAndView = (ModelAndView) mappedMethod.invoke(controller);
+            }
+            else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
+                modelAndView = (ModelAndView) mappedMethod.invoke(controller, this.applicationContext);
+            }
+            else {
+                throw new Exception("La méthode voulue est invalide");
+            }
+            // url for wanted view
+            String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
+            
+            // add model in request
+            for (String key : modelAndView.getModel().keySet()) {
+                req.setAttribute(key, modelAndView.getModel().get(key));
+            }
 
-        // forward dispatcher
-        RequestDispatcher dispat = req.getRequestDispatcher(view_path);
-        dispat.forward(req, res);
+            // forward dispatcher
+            RequestDispatcher dispat = req.getRequestDispatcher(view_path);
+            dispat.forward(req, res);
+        } catch (Exception e) {
+            throw e;
+        }
+        
     }
 }
