@@ -127,7 +127,12 @@ public class FrontControllerServlet extends HttpServlet {
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
             if (ClassUtil.HasAnnotation(mappedMethod)) {
-                executeUrlWithJson(req, res, mappedMethod, controller);
+                if (listUrl.get(wantedUrlMethod).getReturnType() == String.class || listUrl.get(wantedUrlMethod).getReturnType() == Object.class) {
+                    executeUrlWithJson(req, res, mappedMethod, controller);
+                }
+                else {
+                    throw new Exception("La méthode ne peux pas retourner du JSON");
+                }
             }
             else {
                 if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
