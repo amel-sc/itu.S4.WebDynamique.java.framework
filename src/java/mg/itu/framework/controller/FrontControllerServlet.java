@@ -54,8 +54,8 @@ public class FrontControllerServlet extends HttpServlet {
         this.processRequest(req, res);
     }
 
-    // function to get uri 
-    public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    // function to get uri (with PrintWriter)
+    public void processRequestWithPrintWriter(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         PrintWriter out = res.getWriter();
 
         // get URI
@@ -81,6 +81,31 @@ public class FrontControllerServlet extends HttpServlet {
         if (listUrl.containsKey(wantedUrlMethod)) {
             out.println(wantedUrlMethod.getUrl()+", "+wantedUrlMethod.getMethod()+" - "+listUrl.get(wantedUrlMethod).getDeclaringClass().getName()+" - "+listUrl.get(wantedUrlMethod).getName());
 
+            this.executeUrlMethod(req, res, wantedUrlMethod);
+        }
+        else {
+            for (UrlMethod i : listUrl.keySet()) {
+                out.println(i.getUrl()+", "+i.getMethod()+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
+            }   
+        }
+    }
+
+     // function to get uri 
+    public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        PrintWriter out = res.getWriter();
+        // get URI
+        String uri = req.getRequestURI();
+        String contextPath = req.getContextPath();
+        // get after url
+        String afterUrl = uri.substring(contextPath.length());
+
+        // get method
+        String method = req.getMethod();
+    
+        // create new UrlMethod object
+        UrlMethod wantedUrlMethod = new UrlMethod(afterUrl, method);
+
+        if (listUrl.containsKey(wantedUrlMethod)) {
             this.executeUrlMethod(req, res, wantedUrlMethod);
         }
         else {
@@ -147,10 +172,22 @@ public class FrontControllerServlet extends HttpServlet {
     // function to execute request with json
     public void executeUrlWithJson(HttpServletRequest req, HttpServletResponse res, Method mappedMethod, Object controller) throws Exception {
         try {
+            PrintWriter out = res.getWriter();
             // set coontent type to return JSON
             res.setContentType("application/json");
             // get list of parameters types for method
             Class<?>[] parameters = mappedMethod.getParameterTypes();
+            // invoke method
+            String jsonResult = "";
+            if (parameters.length == 0) {
+                jsonResult = (String) mappedMethod.invoke(controller);
+            }
+            else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
+                jsonResult = (String) mappedMethod.invoke(controller, this.applicationContext);
+            }
+
+            out.println(jsonResult);
+
         } catch (Exception e) {
             throw e;
         }
