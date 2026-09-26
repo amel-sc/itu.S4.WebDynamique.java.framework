@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import mg.itu.framework.annotation.UrlMapping;
+import mg.itu.framework.annotation.Json;
 import mg.itu.framework.model.UrlMethod;
 
 public class ClassUtil {
@@ -89,5 +90,17 @@ public class ClassUtil {
         }
 
         return url;
+    }
+
+    // function to verify if a method has an annotation
+    public static boolean HasAnnotation(Method method) {
+        boolean hasAnnotation = false;
+
+        Json annotation = method.getAnnotation(Json.class);
+        if (annotation != null) {
+            hasAnnotation = true;
+        }
+
+        return hasAnnotation;
     }
 }

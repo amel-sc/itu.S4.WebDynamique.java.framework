@@ -142,6 +142,17 @@ public class FrontControllerServlet extends HttpServlet {
         } catch (Exception e) {
             throw e;
         }
-        
+    }
+
+    // function to execute request with json
+    public void executeUrlWithJson(HttpServletRequest req, HttpServletResponse res, Method mappedMethod, Object controller) throws Exception {
+        try {
+            // set coontent type to return JSON
+            res.setContentType("application/json");
+            // get list of parameters types for method
+            Class<?>[] parameters = mappedMethod.getParameterTypes();
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }
