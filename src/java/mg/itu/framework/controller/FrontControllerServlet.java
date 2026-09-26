@@ -127,7 +127,7 @@ public class FrontControllerServlet extends HttpServlet {
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
             if (ClassUtil.HasAnnotation(mappedMethod)) {
-                if (listUrl.get(wantedUrlMethod).getReturnType() == String.class || listUrl.get(wantedUrlMethod).getReturnType() == Object.class) {
+                if (!(listUrl.get(wantedUrlMethod).getReturnType() == void.class)) {
                     executeUrlWithJson(req, res, mappedMethod, controller);
                 }
                 else {
