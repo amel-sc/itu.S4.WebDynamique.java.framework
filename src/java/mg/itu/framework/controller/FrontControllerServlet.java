@@ -125,11 +125,21 @@ public class FrontControllerServlet extends HttpServlet {
             // create new instance of controller
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
-            if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
-                executeUrlNoJson(req, res, mappedMethod, controller);
+            if (ClassUtil.HasAnnotation(mappedMethod)) {
+                if (listUrl.get(wantedUrlMethod).getReturnType() == String.class) {
+                    executeUrlWithJson(req, res, mappedMethod, controller);
+                }
+                else {
+                    throw new Exception("method cannot return a JSON");
+                }
             }
             else {
-                throw new Exception("La méthode voulue ne retourne pas un Objet de type ModelAndView");
+                if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
+                    executeUrlNoJson(req, res, mappedMethod, controller);
+                }
+                else {
+                    throw new Exception("La méthode voulue ne retourne pas un Objet de type ModelAndView");
+                }
             }
 
         } catch (Exception e) {
