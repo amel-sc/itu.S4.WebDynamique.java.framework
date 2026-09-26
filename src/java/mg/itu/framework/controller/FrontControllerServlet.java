@@ -19,6 +19,7 @@ import mg.itu.framework.annotation.Controller;
 import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 import mg.itu.framework.model.ModelAndView;
+import com.google.gson.Gson;
 
 public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
@@ -126,12 +127,7 @@ public class FrontControllerServlet extends HttpServlet {
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
             if (ClassUtil.HasAnnotation(mappedMethod)) {
-                if (listUrl.get(wantedUrlMethod).getReturnType() == String.class) {
-                    executeUrlWithJson(req, res, mappedMethod, controller);
-                }
-                else {
-                    throw new Exception("method cannot return a JSON");
-                }
+                executeUrlWithJson(req, res, mappedMethod, controller);
             }
             else {
                 if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
@@ -188,12 +184,17 @@ public class FrontControllerServlet extends HttpServlet {
             // get list of parameters types for method
             Class<?>[] parameters = mappedMethod.getParameterTypes();
             // invoke method
-            String jsonResult = "";
+            Object jsonResult = null;
             if (parameters.length == 0) {
-                jsonResult = (String) mappedMethod.invoke(controller);
+                jsonResult = mappedMethod.invoke(controller);
             }
             else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
-                jsonResult = (String) mappedMethod.invoke(controller, this.applicationContext);
+                jsonResult = mappedMethod.invoke(controller, this.applicationContext);
+            }
+            // verify if result is a string or an Object
+            if (!(jsonResult instanceof String)) {
+                Gson gson = new Gson();
+                jsonResult = gson.toJson(jsonResult);
             }
 
             out.println(jsonResult);
