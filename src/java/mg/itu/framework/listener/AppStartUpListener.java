@@ -34,7 +34,7 @@ public class AppStartUpListener implements ServletContextListener {
             sce.getServletContext().setAttribute("suffixe", this.suffixe);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-           throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 
