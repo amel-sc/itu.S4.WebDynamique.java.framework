@@ -195,7 +195,7 @@ public class FrontControllerServlet extends HttpServlet {
     }
 
     // function to invoke method
-    public Object invokeMethod(Method mappedMethod, Object controller) throws Exception {
+    public Object invokeMethod(HttpServletRequest req, Method mappedMethod, Object controller) throws Exception {
         Object result = null;
 
         try {
@@ -206,6 +206,9 @@ public class FrontControllerServlet extends HttpServlet {
             for (int i = 0; i < parameters.length; i++) {
                 if (this.applicationContext != null && parameters[i].isInstance(this.applicationContext)) {
                     arguments[i] = this.applicationContext;
+                }
+                else if (req.getParameter(parameters[i].getName()) != null) {
+                    arguments[i] = req.getParameter(parameters[i].getName());
                 }
             }
             // invoke method
