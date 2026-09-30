@@ -155,7 +155,7 @@ public class FrontControllerServlet extends HttpServlet {
             // get list of parameters types for method
             Class<?>[] parameters = mappedMethod.getParameterTypes();
             // invoke the method
-            ModelAndView modelAndView = (ModelAndView) invokeMethod(mappedMethod, controller);
+            ModelAndView modelAndView = (ModelAndView) invokeMethod(req, mappedMethod, controller);
             // url for wanted view
             String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
             
@@ -181,7 +181,7 @@ public class FrontControllerServlet extends HttpServlet {
             // get list of parameters types for method
             Class<?>[] parameters = mappedMethod.getParameterTypes();
             // invoke method
-            Object jsonResult = invokeMethod(mappedMethod, controller);
+            Object jsonResult = invokeMethod(req, mappedMethod, controller);
             // verify if result is a string or an Object
             if (!(jsonResult instanceof String)) {
                 Gson gson = new Gson();
