@@ -2,7 +2,7 @@ package mg.itu.framework.util;
 
 public class StringUtil {
     // function to convert string to other type
-    public static Object convert(String value, Class<?> toCast) {
+    public static Object convert(String value, Class<?> toCast) throws Exception {
         if (toCast == String.class) {
             return value;
         }

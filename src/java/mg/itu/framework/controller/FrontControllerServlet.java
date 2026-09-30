@@ -146,7 +146,7 @@ public class FrontControllerServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
-            System.out.println(e.getCause());
+            e.printStackTrace();
         }
     }
 
@@ -202,7 +202,6 @@ public class FrontControllerServlet extends HttpServlet {
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
-                System.out.println(parameters[i].getName());
                 if (this.applicationContext != null && parameters[i].getType().isInstance(this.applicationContext)) {
                     arguments[i] = this.applicationContext;
                 }
