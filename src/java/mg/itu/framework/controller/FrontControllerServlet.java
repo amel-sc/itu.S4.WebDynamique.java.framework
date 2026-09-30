@@ -19,6 +19,7 @@ import mg.itu.framework.annotation.Controller;
 import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 import mg.itu.framework.model.ModelAndView;
+
 import com.google.gson.Gson;
 
 public class FrontControllerServlet extends HttpServlet {
@@ -208,7 +209,7 @@ public class FrontControllerServlet extends HttpServlet {
                     arguments[i] = this.applicationContext;
                 }
                 else if (req.getParameter(parameters[i].getName()) != null) {
-                    arguments[i] = req.getParameter(parameters[i].getName());
+                    arguments[i] = StringUtil.convert(req.getParameter(parameters[i].getName()), parameters[i]);
                 }
             }
             // invoke method
