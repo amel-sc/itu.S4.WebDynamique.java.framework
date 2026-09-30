@@ -195,17 +195,21 @@ public class FrontControllerServlet extends HttpServlet {
     }
 
     // function to invoke method
-    public Object invokeMethod(Method mappedMethod, Object controller) {
+    public Object invokeMethod(Method mappedMethod, Object controller) throws Exception {
         Object result = null;
 
-        // get list of parameters types for method
-        Class<?>[] parameters = mappedMethod.getParameterTypes();
-        // invoke method
-        if (parameters.length == 0) {
-            result = mappedMethod.invoke(controller);
-        }
-        else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
-            result = mappedMethod.invoke(controller, this.applicationContext);
+        try {
+            // get list of parameters types for method
+            Class<?>[] parameters = mappedMethod.getParameterTypes();
+            // invoke method
+            if (parameters.length == 0) {
+                result = mappedMethod.invoke(controller);
+            }
+            else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
+                result = mappedMethod.invoke(controller, this.applicationContext);
+            }
+        } catch (Exception e) {
+            throw e;
         }
 
         return result;
