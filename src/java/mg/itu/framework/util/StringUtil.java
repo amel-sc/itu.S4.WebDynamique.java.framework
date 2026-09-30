@@ -9,6 +9,9 @@ public class StringUtil {
         else if (toCast == int.class || toCast == Integer.class) {
             return Integer.parseInt(value);
         }
+        else if (toCast == long.class || toCast == Long.class) {
+            return Long.parseLong(value);
+        }
         else {
             return value;
         }
