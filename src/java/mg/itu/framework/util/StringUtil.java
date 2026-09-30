@@ -1,6 +1,8 @@
 package mg.itu.framework.util;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class StringUtil {
     // function to convert string to other type
@@ -19,6 +21,12 @@ public class StringUtil {
         }
         else if (toCast == LocalDateTime.class) {
             return LocalDateTime.parse(value);
+        }
+        else if (toCast == LocalDate.class) {
+            return LocalDate.parse(value);
+        }
+        else if (toCast == LocalTime.class) {
+            return LocalTime.parse(value);
         }
         else {
             return null;
