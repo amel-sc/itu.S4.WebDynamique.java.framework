@@ -126,7 +126,7 @@ public class FrontControllerServlet extends HttpServlet {
             // create new instance of controller
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
-            if (ClassUtil.HasAnnotation(mappedMethod)) {
+            if (ClassUtil.HasJsonAnnotation(mappedMethod)) {
                 if (!(listUrl.get(wantedUrlMethod).getReturnType() == void.class)) {
                     executeUrlWithJson(req, res, mappedMethod, controller);
                 }
@@ -154,16 +154,7 @@ public class FrontControllerServlet extends HttpServlet {
             // get list of parameters types for method
             Class<?>[] parameters = mappedMethod.getParameterTypes();
             // invoke the method
-            ModelAndView modelAndView = null;
-            if (parameters.length == 0) {
-                modelAndView = (ModelAndView) mappedMethod.invoke(controller);
-            }
-            else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
-                modelAndView = (ModelAndView) mappedMethod.invoke(controller, this.applicationContext);
-            }
-            else {
-                throw new Exception("La méthode voulue est invalide");
-            }
+            ModelAndView modelAndView = (ModelAndView) invokeMethod(mappedMethod, controller);
             // url for wanted view
             String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
             
@@ -189,13 +180,7 @@ public class FrontControllerServlet extends HttpServlet {
             // get list of parameters types for method
             Class<?>[] parameters = mappedMethod.getParameterTypes();
             // invoke method
-            Object jsonResult = null;
-            if (parameters.length == 0) {
-                jsonResult = mappedMethod.invoke(controller);
-            }
-            else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
-                jsonResult = mappedMethod.invoke(controller, this.applicationContext);
-            }
+            Object jsonResult = invokeMethod(mappedMethod, controller);
             // verify if result is a string or an Object
             if (!(jsonResult instanceof String)) {
                 Gson gson = new Gson();
@@ -208,4 +193,21 @@ public class FrontControllerServlet extends HttpServlet {
             throw e;
         }
     }
+
+    // function to invoke method
+    public Object invokeMethod(Method mappedMethod, Object controller) {
+        Object result = null;
+
+        // get list of parameters types for method
+        Class<?>[] parameters = mappedMethod.getParameterTypes();
+        // invoke method
+        if (parameters.length == 0) {
+            result = mappedMethod.invoke(controller);
+        }
+        else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
+            result = mappedMethod.invoke(controller, this.applicationContext);
+        }
+
+        return result;
+    } 
 }
