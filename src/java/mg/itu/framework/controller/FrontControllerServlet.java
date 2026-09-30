@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 import mg.itu.framework.util.*;
 import mg.itu.framework.annotation.Controller;
@@ -152,8 +153,6 @@ public class FrontControllerServlet extends HttpServlet {
     // function to execute request without json
     public void executeUrlNoJson(HttpServletRequest req, HttpServletResponse res, Method mappedMethod, Object controller) throws Exception {
         try {
-            // get list of parameters types for method
-            Class<?>[] parameters = mappedMethod.getParameterTypes();
             // invoke the method
             ModelAndView modelAndView = (ModelAndView) invokeMethod(req, mappedMethod, controller);
             // url for wanted view
@@ -178,8 +177,6 @@ public class FrontControllerServlet extends HttpServlet {
             PrintWriter out = res.getWriter();
             // set coontent type to return JSON
             res.setContentType("application/json");
-            // get list of parameters types for method
-            Class<?>[] parameters = mappedMethod.getParameterTypes();
             // invoke method
             Object jsonResult = invokeMethod(req, mappedMethod, controller);
             // verify if result is a string or an Object
@@ -200,16 +197,17 @@ public class FrontControllerServlet extends HttpServlet {
         Object result = null;
 
         try {
-            // get list of parameters types for method
-            Class<?>[] parameters = mappedMethod.getParameterTypes();
+            // get list of parameters of method
+            Parameter[] parameters = mappedMethod.getParameters();
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
-                if (this.applicationContext != null && parameters[i].isInstance(this.applicationContext)) {
+                System.out.println(parameters[i].getName());
+                if (this.applicationContext != null && parameters[i].getType().isInstance(this.applicationContext)) {
                     arguments[i] = this.applicationContext;
                 }
                 else if (req.getParameter(parameters[i].getName()) != null) {
-                    arguments[i] = StringUtil.convert(req.getParameter(parameters[i].getName()), parameters[i]);
+                    arguments[i] = StringUtil.convert(req.getParameter(parameters[i].getName()), parameters[i].getType());
                 }
             }
             // invoke method
