@@ -201,13 +201,15 @@ public class FrontControllerServlet extends HttpServlet {
         try {
             // get list of parameters types for method
             Class<?>[] parameters = mappedMethod.getParameterTypes();
+            // object having arguments for invoke object
+            Object[] arguments = new Object[parameters.length];
+            for (int i = 0; i < parameters.length; i++) {
+                if (this.applicationContext != null && parameters[i].isInstance(this.applicationContext)) {
+                    arguments[i] = this.applicationContext;
+                }
+            }
             // invoke method
-            if (parameters.length == 0) {
-                result = mappedMethod.invoke(controller);
-            }
-            else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
-                result = mappedMethod.invoke(controller, this.applicationContext);
-            }
+            result = mappedMethod.invoke(controller, arguments);
         } catch (Exception e) {
             throw e;
         }
