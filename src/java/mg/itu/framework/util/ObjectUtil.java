@@ -10,7 +10,7 @@ public class ObjectUtil {
     // function to set value in all object's attribute
     public static void setAttributesObject(HttpServletRequest req, Object obj, String parameterName) throws Exception {
         // get object fields
-        Field[] fields = obj.getClass().getFields();
+        Field[] fields = obj.getClass().getDeclaredFields();
         // set value in attributes of object
         String value = "";
         for (int i = 0; i < fields.length; i++) {
@@ -21,15 +21,15 @@ public class ObjectUtil {
     }
 
     // function to get value in object's attribute
-    public static Object getObject(Object obj, Field field, String value) throws Exception {
+    public static Object getObject(Object obj, Field field) throws Exception {
         // create method name
         String methodName = "get" + StringUtil.capitalize(field.getName());
         // get set method
-        Method setMethod = obj.getClass().getMethod(methodName, field.getType());
+        Method setMethod = obj.getClass().getMethod(methodName);
         // execute set method
-        Object returnedValue = setMethod.invoke(obj, StringUtil.convert(value, field.getType()));
+        Object value = setMethod.invoke(obj);
 
-        return returnedValue;
+        return value;
     }
 
     // function to set value in one object's attribute
