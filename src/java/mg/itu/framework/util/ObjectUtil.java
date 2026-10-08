@@ -16,7 +16,7 @@ public class ObjectUtil {
         for (int i = 0; i < fields.length; i++) {
             value = req.getParameter(parameterName+"."+fields[i].getName());
             setObject(obj, fields[i], value);
-            System.out.println("Field ("+fields[i].getName()+") : "+getObject(obj, fields[i], value));
+            System.out.println("Field ("+fields[i].getName()+") : "+getObject(obj, fields[i]));
         }
     }
 
