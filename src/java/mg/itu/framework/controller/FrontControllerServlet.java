@@ -23,7 +23,7 @@ import mg.itu.framework.model.ModelAndView;
 
 import com.google.gson.Gson;
 
-import mg.itu.framework.annotation.ModelAttribute;
+import mg.itu.framework.annotation.ObjectAttribute;
 
 public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
@@ -204,7 +204,7 @@ public class FrontControllerServlet extends HttpServlet {
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
-                if (parameters[i].isAnnotationPresent(ModelAttribute.class)) {
+                if (parameters[i].isAnnotationPresent(ObjectAttribute.class)) {
                     Object obj = parameters[i].getType().getConstructor().newInstance();
                     ObjectUtil.setAttributesObject(req, obj, parameters[i].getName());
                     arguments[i] = obj;
