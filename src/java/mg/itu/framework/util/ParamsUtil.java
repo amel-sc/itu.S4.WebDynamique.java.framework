@@ -2,7 +2,6 @@ package mg.itu.framework.util;
 
 import java.lang.reflect.Parameter;
 
-import mg.itu.framework.annotation.Json;
 import mg.itu.framework.annotation.ModelAttribute;
 
 public class ParamsUtil {
