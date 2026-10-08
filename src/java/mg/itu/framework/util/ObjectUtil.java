@@ -16,7 +16,20 @@ public class ObjectUtil {
         for (int i = 0; i < fields.length; i++) {
             value = req.getParameter(parameterName+"."+fields[i].getName());
             setObject(obj, fields[i], value);
+            System.out.println("Field ("+fields[i].getName()+") : "+getObject(obj, fields[i], value));
         }
+    }
+
+    // function to get value in object's attribute
+    public static Object getObject(Object obj, Field field, String value) throws Exception {
+        // create method name
+        String methodName = "get" + StringUtil.capitalize(field.getName());
+        // get set method
+        Method setMethod = obj.getClass().getMethod(methodName, field.getType());
+        // execute set method
+        Object returnedValue = setMethod.invoke(obj, StringUtil.convert(value, field.getType()));
+
+        return returnedValue;
     }
 
     // function to set value in one object's attribute
