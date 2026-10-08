@@ -8,7 +8,7 @@ import jakarta.servlet.http.*;
 
 public class ObjectUtil {
     // function to set value in all object's attribute
-    public static void setAttributesObject(HttpServletRequest req, Object obj, String parameterName) throws Exception {
+    public static void setAttributesObject(HttpServletRequest req, Object obj, String parameterName) throws Exception {
         // get object fields
         Field[] fields = obj.getClass().getFields();
         // set value in attributes of object
