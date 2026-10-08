@@ -7,7 +7,7 @@ build="build"
 
 #make web-inf and compile java files
 mkdir -p "$build/$web"
-javac -cp "$lib" -d "$build/$web" $(find src -name "*.java")
+javac -parameters -cp "$lib" -d "$build/$web" $(find src -name "*.java")
 
 #remove .jar file
 rm -f "$fileName".jar

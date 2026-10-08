@@ -13,12 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 import mg.itu.framework.util.*;
 import mg.itu.framework.annotation.Controller;
 import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 import mg.itu.framework.model.ModelAndView;
+
 import com.google.gson.Gson;
 
 public class FrontControllerServlet extends HttpServlet {
@@ -126,7 +128,7 @@ public class FrontControllerServlet extends HttpServlet {
             // create new instance of controller
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
-            if (ClassUtil.HasAnnotation(mappedMethod)) {
+            if (ClassUtil.HasJsonAnnotation(mappedMethod)) {
                 if (!(listUrl.get(wantedUrlMethod).getReturnType() == void.class)) {
                     executeUrlWithJson(req, res, mappedMethod, controller);
                 }
@@ -144,26 +146,15 @@ public class FrontControllerServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
-            System.out.println(e.getCause());
+            e.printStackTrace();
         }
     }
 
     // function to execute request without json
     public void executeUrlNoJson(HttpServletRequest req, HttpServletResponse res, Method mappedMethod, Object controller) throws Exception {
         try {
-            // get list of parameters types for method
-            Class<?>[] parameters = mappedMethod.getParameterTypes();
             // invoke the method
-            ModelAndView modelAndView = null;
-            if (parameters.length == 0) {
-                modelAndView = (ModelAndView) mappedMethod.invoke(controller);
-            }
-            else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
-                modelAndView = (ModelAndView) mappedMethod.invoke(controller, this.applicationContext);
-            }
-            else {
-                throw new Exception("La méthode voulue est invalide");
-            }
+            ModelAndView modelAndView = (ModelAndView) invokeMethod(req, mappedMethod, controller);
             // url for wanted view
             String view_path = this.prefixe + modelAndView.getView() + this.suffixe;
             
@@ -186,16 +177,8 @@ public class FrontControllerServlet extends HttpServlet {
             PrintWriter out = res.getWriter();
             // set coontent type to return JSON
             res.setContentType("application/json");
-            // get list of parameters types for method
-            Class<?>[] parameters = mappedMethod.getParameterTypes();
             // invoke method
-            Object jsonResult = null;
-            if (parameters.length == 0) {
-                jsonResult = mappedMethod.invoke(controller);
-            }
-            else if (this.applicationContext != null && parameters.length == 1 && parameters[0].isInstance(this.applicationContext)) {
-                jsonResult = mappedMethod.invoke(controller, this.applicationContext);
-            }
+            Object jsonResult = invokeMethod(req, mappedMethod, controller);
             // verify if result is a string or an Object
             if (!(jsonResult instanceof String)) {
                 Gson gson = new Gson();
@@ -208,4 +191,30 @@ public class FrontControllerServlet extends HttpServlet {
             throw e;
         }
     }
+
+    // function to invoke method
+    public Object invokeMethod(HttpServletRequest req, Method mappedMethod, Object controller) throws Exception {
+        Object result = null;
+
+        try {
+            // get list of parameters of method
+            Parameter[] parameters = mappedMethod.getParameters();
+            // object having arguments for invoke object
+            Object[] arguments = new Object[parameters.length];
+            for (int i = 0; i < parameters.length; i++) {
+                if (this.applicationContext != null && parameters[i].getType().isInstance(this.applicationContext)) {
+                    arguments[i] = this.applicationContext;
+                }
+                else if (req.getParameter(parameters[i].getName()) != null) {
+                    arguments[i] = StringUtil.convert(req.getParameter(parameters[i].getName()), parameters[i].getType());
+                }
+            }
+            // invoke method
+            result = mappedMethod.invoke(controller, arguments);
+        } catch (Exception e) {
+            throw e;
+        }
+
+        return result;
+    } 
 }

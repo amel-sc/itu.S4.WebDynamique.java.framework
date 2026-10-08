@@ -93,7 +93,7 @@ public class ClassUtil {
     }
 
     // function to verify if a method has an annotation
-    public static boolean HasAnnotation(Method method) {
+    public static boolean HasJsonAnnotation(Method method) {
         boolean hasAnnotation = false;
 
         Json annotation = method.getAnnotation(Json.class);
