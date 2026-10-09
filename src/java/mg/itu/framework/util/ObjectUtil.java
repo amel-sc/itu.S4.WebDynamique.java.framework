@@ -2,11 +2,26 @@ package mg.itu.framework.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
 public class ObjectUtil {
+    // function to verify if a string exist in parameter
+    public static boolean parameterContains(Map<String, String[]> parameters, String toVerify) {
+        boolean contains = false;
+
+        for (String key : parameters.keySet()) {
+            if (key.contains(toVerify)) {
+                contains = true;
+                break;
+            }
+        }
+
+        return contains;
+    }
+
     // function to set value in all object's attribute
     public static void setAttributesObject(HttpServletRequest req, Object obj, String parameterName) throws Exception {
         // get object fields
