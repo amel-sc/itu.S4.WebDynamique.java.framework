@@ -36,7 +36,7 @@ public class ObjectUtil {
                 System.out.println("'"+param_str+".' : Exsite");
                 Object subObject = fields[i].getType().getConstructor().newInstance();
                 setAttributesObject(req, urlParamsMap, subObject, param_str);
-                setObject(subObject, fields[i], subObject);
+                setObject(obj, fields[i], subObject);
             } 
             else {
                 value = req.getParameter(parameterName+"."+fields[i].getName());
