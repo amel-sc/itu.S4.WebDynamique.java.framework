@@ -26,9 +26,17 @@ public class ObjectUtil {
     public static void setAttributesObject(HttpServletRequest req, Object obj, String parameterName) throws Exception {
         // get object fields
         Field[] fields = obj.getClass().getDeclaredFields();
+        // get list of url parameters as map
+        Map<String, String[]> paramAsMap = req.getParameterMap();
         // set value in attributes of object
         String value = "";
         for (int i = 0; i < fields.length; i++) {
+            String param_str = parameterName+"."+fields[i].getName();
+
+            if (parameterContains(paramAsMap, param_str+".")) {
+                System.out.println("'"+param_str+".' : Existe");
+            } 
+
             value = req.getParameter(parameterName+"."+fields[i].getName());
             setObject(obj, fields[i], value);
             System.out.println("Field ("+fields[i].getName()+") : "+getObject(obj, fields[i]));
