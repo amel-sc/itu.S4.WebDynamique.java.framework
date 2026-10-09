@@ -201,12 +201,14 @@ public class FrontControllerServlet extends HttpServlet {
         try {
             // get list of parameters of method
             Parameter[] parameters = mappedMethod.getParameters();
+            // get url parameters as map
+            Map<String, String[]> urlParamsMap = req.getParameterMap(); 
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
                 if (parameters[i].isAnnotationPresent(ObjectAttribute.class)) {
                     Object obj = parameters[i].getType().getConstructor().newInstance();
-                    ObjectUtil.setAttributesObject(req, obj, parameters[i].getName());
+                    ObjectUtil.setAttributesObject(req, urlParamsMap, obj, parameters[i].getName());
                     arguments[i] = obj;
                 }
                 else {

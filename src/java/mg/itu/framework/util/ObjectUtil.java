@@ -23,17 +23,15 @@ public class ObjectUtil {
     }
 
     // function to set value in all object's attribute
-    public static void setAttributesObject(HttpServletRequest req, Object obj, String parameterName) throws Exception {
+    public static void setAttributesObject(HttpServletRequest req, Map<String, String[]> urlParamsMap, Object obj, String parameterName) throws Exception {
         // get object fields
         Field[] fields = obj.getClass().getDeclaredFields();
-        // get list of url parameters as map
-        Map<String, String[]> paramAsMap = req.getParameterMap();
         // set value in attributes of object
         String value = "";
         for (int i = 0; i < fields.length; i++) {
             String param_str = parameterName+"."+fields[i].getName();
 
-            if (parameterContains(paramAsMap, param_str+".")) {
+            if (parameterContains(urlParamsMap, param_str+".")) {
                 System.out.println("'"+param_str+".' : Existe");
             } 
 
