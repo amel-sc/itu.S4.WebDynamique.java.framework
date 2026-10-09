@@ -32,12 +32,17 @@ public class ObjectUtil {
             String param_str = parameterName+"."+fields[i].getName();
 
             if (parameterContains(urlParamsMap, param_str+".")) {
-                System.out.println("'"+param_str+".' : Existe");
+                // create Object 
+                Object subObject = fields[i].getType().getConstructor().newInstance();
+                setAttributesObject(req, urlParamsMap, subObject, param_str);
+                setObject(subObject, fields[i], subObject);
             } 
+            else {
+                value = req.getParameter(parameterName+"."+fields[i].getName());
+                setObject(obj, fields[i], value);
+                // System.out.println("Field ("+fields[i].getName()+") : "+getObject(obj, fields[i]));
+            }
 
-            value = req.getParameter(parameterName+"."+fields[i].getName());
-            setObject(obj, fields[i], value);
-            System.out.println("Field ("+fields[i].getName()+") : "+getObject(obj, fields[i]));
         }
     }
 
@@ -51,6 +56,16 @@ public class ObjectUtil {
         Object value = setMethod.invoke(obj);
 
         return value;
+    }
+
+    // function to set subobject in one Object's attriute
+    public static void setObject(Object obj, Field field, Object value) throws Exception {
+        // create method name
+        String methodName = "set" + StringUtil.capitalize(field.getName());
+        // get set method
+        Method setMethod = obj.getClass().getMethod(methodName, field.getType());
+        // execute set method
+        setMethod.invoke(obj, value);
     }
 
     // function to set value in one object's attribute
