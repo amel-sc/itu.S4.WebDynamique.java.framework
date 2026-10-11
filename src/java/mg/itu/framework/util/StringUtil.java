@@ -5,6 +5,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class StringUtil {
+    // function to capitalize first string
+    public static String capitalize(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
     // function to convert string to other type
     public static Object convert(String value, Class<?> toCast) throws Exception {
         if (toCast == String.class) {
