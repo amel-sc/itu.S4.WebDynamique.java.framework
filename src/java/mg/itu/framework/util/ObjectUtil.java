@@ -6,6 +6,7 @@ import java.util.Map;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import mg.itu.framework.model.MapFile;
 
 public class ObjectUtil {
     // function to verify if a string exist in parameter
@@ -39,9 +40,16 @@ public class ObjectUtil {
                 setObject(obj, fields[i], subObject);
             } 
             else {
-                value = req.getParameter(parameterName+"."+fields[i].getName());
-                setObject(obj, fields[i], value);
-                System.out.println("Field ("+fields[i].getName()+") : "+getObject(obj, fields[i]));
+                if (fields[i].getType() == MapFile.class) {
+                    MapFile mapfiletemp = new MapFile();
+                    FileUtil.setMapFileData(req, mapfiletemp, parameterName+"."+fields[i].getName());
+                    setObject(obj, fields[i], mapfiletemp);
+                }
+                else {
+                    value = req.getParameter(parameterName+"."+fields[i].getName());
+                    setObject(obj, fields[i], value);
+                    System.out.println("Field ("+fields[i].getName()+") : "+getObject(obj, fields[i]));
+                }
             }
 
         }
