@@ -206,11 +206,13 @@ public class FrontControllerServlet extends HttpServlet {
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
-                if (parameters[i].isAnnotationPresent(ObjectAttribute.class)) {
+                // vérifier si le nom du parametre contient un "."
+                if (ObjectUtil.parameterContains(urlParamsMap, parameters[i].getName())) {
                     Object obj = parameters[i].getType().getConstructor().newInstance();
                     ObjectUtil.setAttributesObject(req, urlParamsMap, obj, parameters[i].getName());
                     arguments[i] = obj;
                 }
+                // sinon ce n'est pas un objet
                 else {
                     if (this.applicationContext != null && parameters[i].getType().isInstance(this.applicationContext)) {
                         arguments[i] = this.applicationContext;
