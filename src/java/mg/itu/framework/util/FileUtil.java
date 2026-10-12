@@ -9,6 +9,11 @@ import jakarta.servlet.http.*;
 import mg.itu.framework.model.MapFile;
 
 public class FileUtil {
+    // function to verify if req has multipart/form-data
+    public static boolean verifyEnctype(HttpServletRequest req) {
+        return (req.getContentType() != null && (req.getContentType().toLowerCase().contains("multipart/form-data") || req.getContentType().toLowerCase().contains("multipart/mixed")));
+    }
+
     // function to set data on MapFile
     public static void setMapFileData(HttpServletRequest req, MapFile mapfile, String parameterName) throws Exception {
         // get data to insert in mapfile

@@ -210,17 +210,6 @@ public class FrontControllerServlet extends HttpServlet {
                 System.out.println(key+" : "+Arrays.toString(urlParamsMap.get(key)));
             }
 
-            // verify contentType
-            if (req.getContentType() != null && (req.getContentType().toLowerCase().contains("multipart/form-data") || req.getContentType().toLowerCase().contains("multipart/mixed"))) {
-                MapFile mapfile = new MapFile();
-                
-                FileUtil.setMapFileData(req, mapfile, "fichier");
-
-                System.out.println("fileName : "+mapfile.getFileName());
-                System.out.println("extension : "+mapfile.getExtension());
-                System.out.println("Byte[] : "+mapfile.getContent());
-            }
-
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
@@ -234,6 +223,14 @@ public class FrontControllerServlet extends HttpServlet {
                 else {
                     if (this.applicationContext != null && parameters[i].getType().isInstance(this.applicationContext)) {
                         arguments[i] = this.applicationContext;
+                    }
+                    else if (parameters[i].getType().isInstance(MapFile.class)) {
+                        if (FileUtil.verifyEnctype(req)) {
+                            MapFile mapfiletemp = new MapFile();
+                            FileUtil.setMapFileData(req, mapfiletemp, parameters[i].getName());
+                        } else {
+                            throw new Exception("Enctype n'est pas specifier");
+                        }
                     }
                     else if (req.getParameter(parameters[i].getName()) != null) {
                         arguments[i] = StringUtil.convert(req.getParameter(parameters[i].getName()), parameters[i].getType());
