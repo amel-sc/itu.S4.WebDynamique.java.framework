@@ -4,6 +4,7 @@ import java.io.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.MultipartConfig;
+// import jakarta.servlet.http.Part;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -207,8 +208,17 @@ public class FrontControllerServlet extends HttpServlet {
             for (String key : urlParamsMap.keySet()) {
                 System.out.println(key+" : "+Arrays.toString(urlParamsMap.get(key)));
             }
-            System.out.println("OK");
-            
+
+            // verify contentType
+            if (req.getContentType() != null && (req.getContentType().toLowerCase().contains("multipart/form-data") || req.getContentType().toLowerCase().contains("multipart/mixed"))) {
+                Part fichier = req.getPart("fichier");
+                
+                if (fichier != null) {
+                    System.out.println("Nom du fichier : " + fichier.getSubmittedFileName());
+                    System.out.println("Taille : " + fichier.getSize());
+                }
+            }
+
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
