@@ -12,7 +12,16 @@ public class FileUtil {
     // function to set data on MapFile
     public static void setMapFileData(HttpServletRequest req, MapFile mapfile, String parameterName) {
         // get data to insert in mapfile
+        Part file = req.getPart(parameterName);
 
+
+        // get fileName and extension
+        Map<String, String> fileInfo = getFileName(file.getSubmittedFileName());
+        mapfile.setFileName(fileInfo.get("filename"));
+        mapfile.setExtension(fileInfo.get("extension"));
+        
+        // get content as Byte[]
+        mapfile.setContent(file.getInputStream().readAllBytes());
     } 
 
     // function to get extension of a fileName
