@@ -23,8 +23,6 @@ import mg.itu.framework.model.ModelAndView;
 
 import com.google.gson.Gson;
 
-import mg.itu.framework.annotation.ObjectAttribute;
-
 public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
     private String prefixe;
@@ -207,7 +205,9 @@ public class FrontControllerServlet extends HttpServlet {
             Object[] arguments = new Object[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
                 // vérifier si le nom du parametre contient un "."
-                if (ObjectUtil.parameterContains(urlParamsMap, parameters[i].getName())) {
+                if (ObjectUtil.parameterContains(urlParamsMap, parameters[i].getName()+".")) {
+                    System.out.println("Parameter name : "+parameters[i].getName());
+                    System.out.println("Parameter type : "+parameters[i].getName());
                     Object obj = parameters[i].getType().getConstructor().newInstance();
                     ObjectUtil.setAttributesObject(req, urlParamsMap, obj, parameters[i].getName());
                     arguments[i] = obj;
