@@ -23,6 +23,7 @@ import mg.itu.framework.annotation.Controller;
 import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 import mg.itu.framework.model.ModelAndView;
+import mg.itu.framework.model.MapFile;
 
 import com.google.gson.Gson;
 
@@ -211,12 +212,13 @@ public class FrontControllerServlet extends HttpServlet {
 
             // verify contentType
             if (req.getContentType() != null && (req.getContentType().toLowerCase().contains("multipart/form-data") || req.getContentType().toLowerCase().contains("multipart/mixed"))) {
-                Part fichier = req.getPart("fichier");
+                MapFile mapfile = new MapFile();
                 
-                if (fichier != null) {
-                    System.out.println("Nom du fichier : " + fichier.getSubmittedFileName());
-                    System.out.println("Taille : " + fichier.getSize());
-                }
+                FileUtil.setMapFileData(req, mapfile, "fichier");
+
+                System.out.println("fileName : "+mapfile.getFileName());
+                System.out.println("extension : "+mapfile.getExtension());
+                System.out.println("Byte[] : "+mapfile.getContent());
             }
 
             // object having arguments for invoke object

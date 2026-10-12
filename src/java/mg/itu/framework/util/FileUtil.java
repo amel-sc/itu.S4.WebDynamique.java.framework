@@ -10,7 +10,7 @@ import mg.itu.framework.model.MapFile;
 
 public class FileUtil {
     // function to set data on MapFile
-    public static void setMapFileData(HttpServletRequest req, MapFile mapfile, String parameterName) {
+    public static void setMapFileData(HttpServletRequest req, MapFile mapfile, String parameterName) throws Exception {
         // get data to insert in mapfile
         Part file = req.getPart(parameterName);
 
@@ -38,7 +38,7 @@ public class FileUtil {
 
         // get fileName and extension
         result.put("filename", fileName.substring(0, dotIndex));
-        result.put("extension", fileName.substring(dotIndex, fileName.length() - 1));
+        result.put("extension", fileName.substring(dotIndex, fileName.length()));
 
         return result;
     }  

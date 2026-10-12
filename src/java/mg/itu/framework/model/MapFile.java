@@ -3,7 +3,7 @@ package mg.itu.framework.model;
 public class MapFile {
     private String fileName;
     private String extension;
-    private Byte[] content;
+    private byte[] content;
 
     public String getFileName() {
         return fileName;
@@ -17,10 +17,10 @@ public class MapFile {
     public void setExtension(String extension) {
         this.extension = extension;
     }
-    public Byte[] getContent() {
+    public byte[] getContent() {
         return content;
     }
-    public void setContent(Byte[] content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 }
