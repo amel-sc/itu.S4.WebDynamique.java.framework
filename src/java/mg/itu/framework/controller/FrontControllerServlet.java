@@ -221,10 +221,11 @@ public class FrontControllerServlet extends HttpServlet {
                 }
                 // sinon ce n'est pas un objet
                 else {
+                    System.out.println("Verify types:"+parameters[i].getType());
                     if (this.applicationContext != null && parameters[i].getType().isInstance(this.applicationContext)) {
                         arguments[i] = this.applicationContext;
                     }
-                    else if (parameters[i].getType().isInstance(MapFile.class)) {
+                    else if (parameters[i].getType() == MapFile.class) {
                         if (FileUtil.verifyEnctype(req)) {
                             MapFile mapfiletemp = new MapFile();
                             FileUtil.setMapFileData(req, mapfiletemp, parameters[i].getName());
