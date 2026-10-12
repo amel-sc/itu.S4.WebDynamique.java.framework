@@ -3,11 +3,13 @@ package mg.itu.framework.controller;
 import java.io.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import jakarta.servlet.annotation.MultipartConfig;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,7 @@ import mg.itu.framework.model.ModelAndView;
 
 import com.google.gson.Gson;
 
+@MultipartConfig
 public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
     private String prefixe;
@@ -201,6 +204,11 @@ public class FrontControllerServlet extends HttpServlet {
             Parameter[] parameters = mappedMethod.getParameters();
             // get url parameters as map
             Map<String, String[]> urlParamsMap = req.getParameterMap(); 
+            for (String key : urlParamsMap.keySet()) {
+                System.out.println(key+" : "+Arrays.toString(urlParamsMap.get(key)));
+            }
+            System.out.println("OK");
+            
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
