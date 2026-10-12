@@ -228,6 +228,7 @@ public class FrontControllerServlet extends HttpServlet {
                         if (FileUtil.verifyEnctype(req)) {
                             MapFile mapfiletemp = new MapFile();
                             FileUtil.setMapFileData(req, mapfiletemp, parameters[i].getName());
+                            arguments[i] = mapfiletemp;
                         } else {
                             throw new Exception("Enctype n'est pas specifier");
                         }
