@@ -206,8 +206,6 @@ public class FrontControllerServlet extends HttpServlet {
             for (int i = 0; i < parameters.length; i++) {
                 // vérifier si le nom du parametre contient un "."
                 if (ObjectUtil.parameterContains(urlParamsMap, parameters[i].getName()+".")) {
-                    System.out.println("Parameter name : "+parameters[i].getName());
-                    System.out.println("Parameter type : "+parameters[i].getName());
                     Object obj = parameters[i].getType().getConstructor().newInstance();
                     ObjectUtil.setAttributesObject(req, urlParamsMap, obj, parameters[i].getName());
                     arguments[i] = obj;
