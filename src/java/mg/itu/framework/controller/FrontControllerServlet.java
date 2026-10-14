@@ -227,7 +227,8 @@ public class FrontControllerServlet extends HttpServlet {
                     }
                     else if (parameters[i].getType() == MapFile[].class) {
                         if (FileUtil.verifyEnctype(req)) {
-                            MapFile[] mapfiletemps = new MapFile[1];
+                            int mapfilesize = FileUtil.getMapFileSize(req, parameters[i].getName());
+                            MapFile[] mapfiletemps = new MapFile[mapfilesize];
                             FileUtil.setMapFileData(req, mapfiletemps, parameters[i].getName());
                             arguments[i] = mapfiletemps;
                         } else {
