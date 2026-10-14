@@ -249,7 +249,6 @@ public class FrontControllerServlet extends HttpServlet {
         }
         else if (parameter.getType() == MapFile.class) {
             if (FileUtil.verifyEnctype(req)) {
-                System.out.println("Parameter : "+parameter.getName());
                 MapFile mapfiletmp = new MapFile();
                 FileUtil.setMapFileData(req, mapfiletmp, parameter.getName());
                 argument = mapfiletmp;
