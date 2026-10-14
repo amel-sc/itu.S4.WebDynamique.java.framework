@@ -70,7 +70,7 @@ public class FileUtil {
     public static Map<String, String> getFileName(String fileName) {
         Map<String, String> result = new HashMap<String, String>();
 
-        int dotIndex = -1;
+        Integer dotIndex = null;
         for (int i = (fileName.length() - 1); i >= 0; i--) {
           if (fileName.charAt(i) == '.') {
             dotIndex = i;
@@ -79,8 +79,14 @@ public class FileUtil {
         } 
 
         // get fileName and extension
-        result.put("filename", fileName.substring(0, dotIndex));
-        result.put("extension", fileName.substring(dotIndex, fileName.length()));
+        if (dotIndex == null) {
+            result.put("filename", fileName);
+            result.put("extension", "");
+        }
+        else {
+            result.put("filename", fileName.substring(0, dotIndex));
+            result.put("extension", fileName.substring(dotIndex, fileName.length()));
+        }
 
         return result;
     }  
