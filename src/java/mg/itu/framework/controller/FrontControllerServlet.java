@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
@@ -224,6 +224,15 @@ public class FrontControllerServlet extends HttpServlet {
                     System.out.println("Verify types:"+parameters[i].getType());
                     if (this.applicationContext != null && parameters[i].getType().isInstance(this.applicationContext)) {
                         arguments[i] = this.applicationContext;
+                    }
+                    else if (parameters[i].getType() == MapFile[].class) {
+                        if (FileUtil.verifyEnctype(req)) {
+                            MapFile mapfiletemp = new MapFile();
+                            FileUtil.setMapFileData(req, mapfiletemp, parameters[i].getName());
+                            arguments[i] = mapfiletemp;
+                        } else {
+                            throw new Exception("Enctype n'est pas specifier");
+                        }
                     }
                     else if (parameters[i].getType() == MapFile.class) {
                         if (FileUtil.verifyEnctype(req)) {
