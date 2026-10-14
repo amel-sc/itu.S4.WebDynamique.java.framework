@@ -206,9 +206,6 @@ public class FrontControllerServlet extends HttpServlet {
             Parameter[] parameters = mappedMethod.getParameters();
             // get url parameters as map
             Map<String, String[]> urlParamsMap = req.getParameterMap(); 
-            for (String key : urlParamsMap.keySet()) {
-                System.out.println(key+" : "+Arrays.toString(urlParamsMap.get(key)));
-            }
 
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
@@ -221,7 +218,6 @@ public class FrontControllerServlet extends HttpServlet {
                 }
                 // sinon ce n'est pas un objet
                 else {
-                    System.out.println("Verify types:"+parameters[i].getType());
                     if (this.applicationContext != null && parameters[i].getType().isInstance(this.applicationContext)) {
                         arguments[i] = this.applicationContext;
                     }

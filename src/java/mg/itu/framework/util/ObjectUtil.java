@@ -41,20 +41,19 @@ public class ObjectUtil {
             } 
             else {
                 if (fields[i].getType() == MapFile[].class) {
-                    int mapfilesize = FileUtil.getMapFileSize(req, fields[i].getName());
+                    int mapfilesize = FileUtil.getMapFileSize(req, param_str);
                     MapFile[] mapfiletmps = new MapFile[mapfilesize];
-                    FileUtil.setMapFileData(req, mapfiletmps, fields[i].getName());
+                    FileUtil.setMapFileData(req, mapfiletmps, param_str);
                     setObject(obj, fields[i], mapfiletmps);
                 }
                 else if (fields[i].getType() == MapFile.class) {
                     MapFile mapfiletmp = new MapFile();
-                    FileUtil.setMapFileData(req, mapfiletmp, parameterName+"."+fields[i].getName());
+                    FileUtil.setMapFileData(req, mapfiletmp, param_str);
                     setObject(obj, fields[i], mapfiletmp);
                 }
                 else {
-                    value = req.getParameter(parameterName+"."+fields[i].getName());
+                    value = req.getParameter(param_str);
                     setObject(obj, fields[i], value);
-                    System.out.println("Field ("+fields[i].getName()+") : "+getObject(obj, fields[i]));
                 }
             }
 
