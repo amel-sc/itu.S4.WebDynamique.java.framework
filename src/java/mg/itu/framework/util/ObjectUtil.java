@@ -40,10 +40,16 @@ public class ObjectUtil {
                 setObject(obj, fields[i], subObject);
             } 
             else {
-                if (fields[i].getType() == MapFile.class) {
-                    MapFile mapfiletemp = new MapFile();
-                    FileUtil.setMapFileData(req, mapfiletemp, parameterName+"."+fields[i].getName());
-                    setObject(obj, fields[i], mapfiletemp);
+                if (fields[i].getType() == MapFile[].class) {
+                    int mapfilesize = FileUtil.getMapFileSize(req, fields[i].getName());
+                    MapFile[] mapfiletmps = new MapFile[mapfilesize];
+                    FileUtil.setMapFileData(req, mapfiletmps, fields[i].getName());
+                    setObject(obj, fields[i], mapfiletmps);
+                }
+                else if (fields[i].getType() == MapFile.class) {
+                    MapFile mapfiletmp = new MapFile();
+                    FileUtil.setMapFileData(req, mapfiletmp, parameterName+"."+fields[i].getName());
+                    setObject(obj, fields[i], mapfiletmp);
                 }
                 else {
                     value = req.getParameter(parameterName+"."+fields[i].getName());
