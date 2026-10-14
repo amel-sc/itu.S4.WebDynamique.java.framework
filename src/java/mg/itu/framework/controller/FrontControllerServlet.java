@@ -218,31 +218,7 @@ public class FrontControllerServlet extends HttpServlet {
                 }
                 // sinon ce n'est pas un objet
                 else {
-                    if (this.applicationContext != null && parameters[i].getType().isInstance(this.applicationContext)) {
-                        arguments[i] = this.applicationContext;
-                    }
-                    else if (parameters[i].getType() == MapFile[].class) {
-                        if (FileUtil.verifyEnctype(req)) {
-                            int mapfilesize = FileUtil.getMapFileSize(req, parameters[i].getName());
-                            MapFile[] mapfiletmps = new MapFile[mapfilesize];
-                            FileUtil.setMapFileData(req, mapfiletmps, parameters[i].getName());
-                            arguments[i] = mapfiletmps;
-                        } else {
-                            throw new Exception("Enctype n'est pas specifier");
-                        }
-                    }
-                    else if (parameters[i].getType() == MapFile.class) {
-                        if (FileUtil.verifyEnctype(req)) {
-                            MapFile mapfiletmp = new MapFile();
-                            FileUtil.setMapFileData(req, mapfiletmp, parameters[i].getName());
-                            arguments[i] = mapfiletmp;
-                        } else {
-                            throw new Exception("Enctype n'est pas specifier");
-                        }
-                    }
-                    else if (req.getParameter(parameters[i].getName()) != null) {
-                        arguments[i] = StringUtil.convert(req.getParameter(parameters[i].getName()), parameters[i].getType());
-                    }
+                    noObjectParameter(req, arguments[i], parameters[i]);
                 }
             }
             // invoke method
@@ -253,4 +229,37 @@ public class FrontControllerServlet extends HttpServlet {
 
         return result;
     } 
+
+    // function to control non object parameter
+    public void noObjectParameter(HttpServletRequest req, Object argument, Parameter parameter) throws Exception {
+        // verify if parameter is applicationContext
+        if (this.applicationContext != null && parameter.getType().isInstance(this.applicationContext)) {
+            argument = this.applicationContext;
+        }
+        // verify if parameter is MapFile[]
+        else if (parameter.getType() == MapFile[].class) {
+            if (FileUtil.verifyEnctype(req)) {
+                int mapfilesize = FileUtil.getMapFileSize(req, parameter.getName());
+                MapFile[] mapfiletmps = new MapFile[mapfilesize];
+                FileUtil.setMapFileData(req, mapfiletmps, parameter.getName());
+                argument = mapfiletmps;
+            } else {
+                throw new Exception("Enctype n'est pas specifier");
+            }
+        }
+        // verify if parameter is MapFile
+        else if (parameter.getType() == MapFile.class) {
+            if (FileUtil.verifyEnctype(req)) {
+                MapFile mapfiletmp = new MapFile();
+                FileUtil.setMapFileData(req, mapfiletmp, parameter.getName());
+                argument = mapfiletmp;
+            } else {
+                throw new Exception("Enctype n'est pas specifier");
+            }
+        }
+        // verify if it's a simple object
+        else if (req.getParameter(parameter.getName()) != null) {
+            argument = StringUtil.convert(req.getParameter(parameter.getName()), parameter.getType());
+        }
+    }
 }
