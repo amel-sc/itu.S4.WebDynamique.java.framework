@@ -11,37 +11,41 @@ import jakarta.servlet.http.*;
 
 public class SessionUtil {
     // function to get Value from HttpSession
-    public static void initMapSession(HttpSession httpsession, MapSession mapsession) {
+    public static void initMapSession(HttpSession httpsession, ServletContext context) {
         Enumeration<String> httpsession_keys = httpsession.getAttributeNames();
+
+        createMapSessionContext(context);
 
         while (httpsession_keys.hasMoreElements()) {
             String key = httpsession_keys.nextElement();
 
-            mapsession.add(key, httpsession.getAttribute(key));
+           ((MapSession) context.getAttribute("mapsession")).add(key, httpsession.getAttribute(key));
         }
     }
 
     // function to rectify values in HttpSession (Après invoke)
-    public static void rectifyHttpSession(HttpSession httpsession, MapSession mapsession) {
-        Set<String> keys = mapsession.getKeys();
+    public static void rectifyHttpSession(HttpSession httpsession, ServletContext context) {
+        Set<String> keys = ((MapSession) context.getAttribute("mapsession")).getKeys();
+
+        createMapSessionContext(context);
 
         for (String key : keys) {
-            httpsession.setAttribute(key, mapsession.get(key));
+            httpsession.setAttribute(key, ((MapSession) context.getAttribute("mapsession")).get(key));
         }
     }
 
     // function to verify if list object has session
-    public static MapSession getMapSessionFromObject(Object[] parameters) {
-        MapSession mapSession = null;
+    public static boolean verifyMapSessionObject(Object[] parameters) {
+        boolean hasSession = false;
 
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i] instanceof MapSession) {
-                mapSession = (MapSession) parameters[i];
+                hasSession = true;
                 break;
             }
         }
 
-        return mapSession;
+        return hasSession;
     } 
 
     // function to verify if MapSession is already in context
@@ -53,5 +57,12 @@ public class SessionUtil {
         }
 
         return sessionExist;
+    }
+
+    // function to create session if not exist in context
+    public static void createMapSessionContext(ServletContext context) {
+        if (!verifyMapSessionContext(context)) {
+            context.setAttribute("mapsession", new MapSession());
+        }
     }
 }

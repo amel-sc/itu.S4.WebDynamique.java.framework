@@ -225,9 +225,8 @@ public class FrontControllerServlet extends HttpServlet {
             // invoke method
             result = mappedMethod.invoke(controller, arguments);
             // verify if map is not null to rectify HttpSession
-            MapSession mapSession = SessionUtil.getMapSessionFromObject(arguments);
-            if (mapSession != null) {
-                SessionUtil.rectifyHttpSession(req.getSession(), mapSession);
+            if (SessionUtil.verifyMapSessionObject(arguments)) {
+                SessionUtil.rectifyHttpSession(req.getSession(), req.getServletContext());
             }
         } catch (Exception e) {
             throw e;
@@ -245,9 +244,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
         else if (parameter.getType() == MapSession.class) {
             // init session from httpsession
-            MapSession mapSession = new MapSession();
-            SessionUtil.initMapSession(req.getSession(), mapSession);
-            argument = mapSession;
+            SessionUtil.initMapSession(req.getSession(), req.getServletContext());
+            argument = (MapSession) req.getServletContext().getAttribute("mapsession");
         }
         else if (parameter.getType() == MapFile[].class) {
             if (FileUtil.verifyEnctype(req)) {
