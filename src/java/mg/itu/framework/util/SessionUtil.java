@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 
+import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
 public class SessionUtil {
@@ -42,4 +43,15 @@ public class SessionUtil {
 
         return mapSession;
     } 
+
+    // function to verify if MapSession is already in context
+    public static boolean verifyMapSessionContext(ServletContext context) {
+        boolean sessionExist = false;
+
+        if (context.getAttribute("mapsession") != null) {
+            sessionExist = true;
+        }
+
+        return sessionExist;
+    }
 }
