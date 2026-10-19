@@ -208,7 +208,8 @@ public class FrontControllerServlet extends HttpServlet {
             // get url parameters as map
             Map<String, String[]> urlParamsMap = req.getParameterMap(); 
             // variable to verify for MapSession
-            MapSession mapSession = null;            
+            Boolean hasSession = false;
+            MapSession mapSession = new MapSession();            
 
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
@@ -221,13 +222,13 @@ public class FrontControllerServlet extends HttpServlet {
                 }
                 // sinon ce n'est pas un objet
                 else {
-                    arguments[i] = noObjectParameter(req, parameters[i], mapSession);
+                    arguments[i] = noObjectParameter(req, parameters[i], mapSession, hasSession);
                 }
             }
             // invoke method
             result = mappedMethod.invoke(controller, arguments);
             // verify if map is not null to rectify HttpSession
-            if (mapSession != null) {
+            if (hasSession) {
                 SessionUtil.rectifyHttpSession(req.getSession(), mapSession);
             }
         } catch (Exception e) {
@@ -238,7 +239,7 @@ public class FrontControllerServlet extends HttpServlet {
     } 
 
     // function to controle if is no object in invokemethod
-    public Object noObjectParameter(HttpServletRequest req, Parameter parameter, MapSession mapSession) throws Exception {
+    public Object noObjectParameter(HttpServletRequest req, Parameter parameter, MapSession mapSession, Boolean hasSession) throws Exception {
         Object argument = null;
 
         if (this.applicationContext != null && parameter.getType().isInstance(this.applicationContext)) {
@@ -246,7 +247,7 @@ public class FrontControllerServlet extends HttpServlet {
         }
         else if (parameter.getType() == MapSession.class) {
             // init session from httpsession
-            mapSession = new MapSession();
+            hasSession = true;
             SessionUtil.initMapSession(req.getSession(), mapSession);
             argument = mapSession;
         }
