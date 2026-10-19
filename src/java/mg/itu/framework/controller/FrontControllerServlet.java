@@ -24,6 +24,7 @@ import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 import mg.itu.framework.model.ModelAndView;
 import mg.itu.framework.model.MapFile;
+import mg.itu.framework.model.MapSession;
 
 import com.google.gson.Gson;
 
@@ -206,6 +207,8 @@ public class FrontControllerServlet extends HttpServlet {
             Parameter[] parameters = mappedMethod.getParameters();
             // get url parameters as map
             Map<String, String[]> urlParamsMap = req.getParameterMap(); 
+            // variable to verify if parameter has session
+            boolean hasSession = false;
 
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
@@ -218,7 +221,7 @@ public class FrontControllerServlet extends HttpServlet {
                 }
                 // sinon ce n'est pas un objet
                 else {
-                    arguments[i] = noObjectParameter(req, parameters[i]);
+                    arguments[i] = noObjectParameter(req, parameters[i], hasSession);
                 }
             }
             // invoke method
@@ -231,11 +234,15 @@ public class FrontControllerServlet extends HttpServlet {
     } 
 
     // function to controle if is no object in invokemethod
-    public Object noObjectParameter(HttpServletRequest req, Parameter parameter) throws Exception {
+    public Object noObjectParameter(HttpServletRequest req, Parameter parameter, boolean hasSession) throws Exception {
         Object argument = null;
 
         if (this.applicationContext != null && parameter.getType().isInstance(this.applicationContext)) {
             argument = this.applicationContext;
+        }
+        else if (parameter.getType() == MapSession.class) {
+            // init session from httpsession
+            Map
         }
         else if (parameter.getType() == MapFile[].class) {
             if (FileUtil.verifyEnctype(req)) {

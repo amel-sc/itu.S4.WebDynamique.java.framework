@@ -10,7 +10,7 @@ import jakarta.servlet.http.*;
 
 public class SessionUtil {
     // function to get Value from HttpSession
-    public void initMapSession(HttpSession httpsession, MapSession mapsession) {
+    public static void initMapSession(HttpSession httpsession, MapSession mapsession) {
         Enumeration<String> httpsession_keys = httpsession.getAttributeNames();
 
         while (httpsession_keys.hasMoreElements()) {
@@ -21,7 +21,7 @@ public class SessionUtil {
     }
 
     // function to rectify values in HttpSession (Après invoke)
-    public void rectifyHttpSession(HttpSession httpsession, MapSession mapsession) {
+    public static void rectifyHttpSession(HttpSession httpsession, MapSession mapsession) {
         Set<String> keys = mapsession.getKeys();
 
         for (String key : keys) {
