@@ -207,8 +207,8 @@ public class FrontControllerServlet extends HttpServlet {
             Parameter[] parameters = mappedMethod.getParameters();
             // get url parameters as map
             Map<String, String[]> urlParamsMap = req.getParameterMap(); 
-            // variable to verify if parameter has session
-            boolean hasSession = false;
+            // variable to verify for MapSession
+            MapSession mapSession = null;            
 
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
@@ -221,11 +221,15 @@ public class FrontControllerServlet extends HttpServlet {
                 }
                 // sinon ce n'est pas un objet
                 else {
-                    arguments[i] = noObjectParameter(req, parameters[i], hasSession);
+                    arguments[i] = noObjectParameter(req, parameters[i], mapSession);
                 }
             }
             // invoke method
             result = mappedMethod.invoke(controller, arguments);
+            // verify if map is not null to rectify HttpSession
+            if (mapSession != null) {
+                SessionUtil.rectifyHttpSession(req.getSession(), mapSession);
+            }
         } catch (Exception e) {
             throw e;
         }
@@ -234,7 +238,7 @@ public class FrontControllerServlet extends HttpServlet {
     } 
 
     // function to controle if is no object in invokemethod
-    public Object noObjectParameter(HttpServletRequest req, Parameter parameter, boolean hasSession) throws Exception {
+    public Object noObjectParameter(HttpServletRequest req, Parameter parameter, MapSession mapSession) throws Exception {
         Object argument = null;
 
         if (this.applicationContext != null && parameter.getType().isInstance(this.applicationContext)) {
@@ -242,7 +246,8 @@ public class FrontControllerServlet extends HttpServlet {
         }
         else if (parameter.getType() == MapSession.class) {
             // init session from httpsession
-            Map
+            SessionUtil.initMapSession(req.getSession(), mapSession);
+            argument = mapSession;
         }
         else if (parameter.getType() == MapFile[].class) {
             if (FileUtil.verifyEnctype(req)) {

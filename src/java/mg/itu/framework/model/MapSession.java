@@ -5,7 +5,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class MapSession {
-    private Map<String, Object> maps = new HashMap<String, Object>();
+    private Map<String, Object> maps;
+
+    public MapSession() {
+        this.maps = new HashMap<String, Object>();
+    }
 
     // function to add in map
     public void add(String key, Object value) {
