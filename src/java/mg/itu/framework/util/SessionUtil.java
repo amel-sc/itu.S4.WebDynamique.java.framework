@@ -4,6 +4,7 @@ import mg.itu.framework.model.MapSession;
 
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.servlet.http.*;
 
@@ -21,8 +22,10 @@ public class SessionUtil {
 
     // function to rectify values in HttpSession (Après invoke)
     public void rectifyHttpSession(HttpSession httpsession, MapSession mapsession) {
-        for (Map.Entry<String, Integer> entry : mapssession..entrySet()) {
-            System.out.println(entry.getKey() + " = " + entry.getValue());
+        Set<String> keys = mapsession.getKeys();
+
+        for (String key : keys) {
+            httpsession.setAttribute(key, mapsession.get(key));
         }
     }
 }
