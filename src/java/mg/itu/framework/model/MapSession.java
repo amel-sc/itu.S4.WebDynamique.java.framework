@@ -10,4 +10,9 @@ public class MapSession {
     public void add(String key, Object value) {
         maps.put(key, value);
     } 
+
+    // function to get in map
+    public Object get(String key) {
+        return maps.get(key);
+    }
 }
