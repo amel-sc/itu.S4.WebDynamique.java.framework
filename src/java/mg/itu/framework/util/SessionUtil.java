@@ -24,7 +24,7 @@ public class SessionUtil {
            mapsession.add(key, req.getSession().getAttribute(key));
         }
 
-        createMapSessionContext(req, mapsession);
+        setMapSessionContext(req, mapsession);
     }
 
     // function to rectify values in HttpSession (Après invoke)
@@ -44,7 +44,7 @@ public class SessionUtil {
             if (parameters[i] instanceof MapSession) {
                 if (req.getServletContext().getAttribute("mapsession") == null) {
                     MapSession mapSession = (MapSession) parameters[i];
-                    createMapSessionContext(req, mapSession);
+                    setMapSessionContext(req, mapSession);
                 }
                 hasSession = true;
                 break;
@@ -55,7 +55,7 @@ public class SessionUtil {
     } 
 
     // function to set mapsession in ServletContext
-    public static void createMapSessionContext(HttpServletRequest req, MapSession mapsession) {
+    public static void setMapSessionContext(HttpServletRequest req, MapSession mapsession) {
         req.getServletContext().setAttribute("mapsession", mapsession);
     }
 
