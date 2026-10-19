@@ -3,15 +3,18 @@ package mg.itu.framework.controller;
 import java.io.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import jakarta.servlet.annotation.MultipartConfig;
+// import jakarta.servlet.http.Part;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
@@ -20,11 +23,11 @@ import mg.itu.framework.annotation.Controller;
 import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 import mg.itu.framework.model.ModelAndView;
+import mg.itu.framework.model.MapFile;
 
 import com.google.gson.Gson;
 
-import mg.itu.framework.annotation.ObjectAttribute;
-
+@MultipartConfig
 public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
     private String prefixe;
@@ -203,21 +206,19 @@ public class FrontControllerServlet extends HttpServlet {
             Parameter[] parameters = mappedMethod.getParameters();
             // get url parameters as map
             Map<String, String[]> urlParamsMap = req.getParameterMap(); 
+
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
             for (int i = 0; i < parameters.length; i++) {
-                if (parameters[i].isAnnotationPresent(ObjectAttribute.class)) {
+                // vérifier si le nom du parametre contient un "."
+                if (ObjectUtil.parameterContains(urlParamsMap, parameters[i].getName()+".")) {
                     Object obj = parameters[i].getType().getConstructor().newInstance();
                     ObjectUtil.setAttributesObject(req, urlParamsMap, obj, parameters[i].getName());
                     arguments[i] = obj;
                 }
+                // sinon ce n'est pas un objet
                 else {
-                    if (this.applicationContext != null && parameters[i].getType().isInstance(this.applicationContext)) {
-                        arguments[i] = this.applicationContext;
-                    }
-                    else if (req.getParameter(parameters[i].getName()) != null) {
-                        arguments[i] = StringUtil.convert(req.getParameter(parameters[i].getName()), parameters[i].getType());
-                    }
+                    arguments[i] = noObjectParameter(req, parameters[i]);
                 }
             }
             // invoke method
@@ -229,5 +230,36 @@ public class FrontControllerServlet extends HttpServlet {
         return result;
     } 
 
-    // function to 
+    // function to controle if is no object in invokemethod
+    public Object noObjectParameter(HttpServletRequest req, Parameter parameter) throws Exception {
+        Object argument = null;
+
+        if (this.applicationContext != null && parameter.getType().isInstance(this.applicationContext)) {
+            argument = this.applicationContext;
+        }
+        else if (parameter.getType() == MapFile[].class) {
+            if (FileUtil.verifyEnctype(req)) {
+                int mapfilesize = FileUtil.getMapFileSize(req, parameter.getName());
+                MapFile[] mapfiletmps = new MapFile[mapfilesize];
+                FileUtil.setMapFileData(req, mapfiletmps, parameter.getName());
+                argument = mapfiletmps;
+            } else {
+                throw new Exception("Enctype n'est pas specifier");
+            }
+        }
+        else if (parameter.getType() == MapFile.class) {
+            if (FileUtil.verifyEnctype(req)) {
+                MapFile mapfiletmp = new MapFile();
+                FileUtil.setMapFileData(req, mapfiletmp, parameter.getName());
+                argument = mapfiletmp;
+            } else {
+                throw new Exception("Enctype n'est pas specifier");
+            }
+        }
+        else if (req.getParameter(parameter.getName()) != null) {
+            argument = StringUtil.convert(req.getParameter(parameter.getName()), parameter.getType());
+        }
+
+        return argument;
+    }
 }
