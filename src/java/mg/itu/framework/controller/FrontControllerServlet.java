@@ -225,8 +225,8 @@ public class FrontControllerServlet extends HttpServlet {
             // invoke method
             result = mappedMethod.invoke(controller, arguments);
             // verify if map is not null to rectify HttpSession
-            if (SessionUtil.verifyMapSessionObject(arguments)) {
-                SessionUtil.rectifyHttpSession(req.getSession(), req.getServletContext());
+            if (SessionUtil.verifyMapSessionObject(req, arguments)) {
+                SessionUtil.rectifyHttpSession(req, req.getServletContext().getAttribute("mapsession"));
             }
         } catch (Exception e) {
             throw e;
