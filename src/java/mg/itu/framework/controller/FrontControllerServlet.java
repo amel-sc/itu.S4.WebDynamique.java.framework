@@ -246,6 +246,7 @@ public class FrontControllerServlet extends HttpServlet {
         }
         else if (parameter.getType() == MapSession.class) {
             // init session from httpsession
+            mapSession = new MapSession();
             SessionUtil.initMapSession(req.getSession(), mapSession);
             argument = mapSession;
         }
