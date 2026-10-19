@@ -28,4 +28,18 @@ public class SessionUtil {
             httpsession.setAttribute(key, mapsession.get(key));
         }
     }
+
+    // function to verify if list object has session
+    public static MapSession getMapSessionFromObject(Object[] parameters) {
+        MapSession mapSession = null;
+
+        for (int i = 0; i < parameters.length; i++) {
+            if (parameters[i] instanceof MapSession) {
+                mapSession = (MapSession) parameters[i];
+                break;
+            }
+        }
+
+        return mapSession;
+    } 
 }

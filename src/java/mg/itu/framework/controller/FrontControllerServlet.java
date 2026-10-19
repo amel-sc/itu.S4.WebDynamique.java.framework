@@ -206,10 +206,7 @@ public class FrontControllerServlet extends HttpServlet {
             // get list of parameters of method
             Parameter[] parameters = mappedMethod.getParameters();
             // get url parameters as map
-            Map<String, String[]> urlParamsMap = req.getParameterMap(); 
-            // variable to verify for MapSession
-            Boolean hasSession = false;
-            MapSession mapSession = new MapSession();            
+            Map<String, String[]> urlParamsMap = req.getParameterMap();         
 
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
@@ -222,13 +219,14 @@ public class FrontControllerServlet extends HttpServlet {
                 }
                 // sinon ce n'est pas un objet
                 else {
-                    arguments[i] = noObjectParameter(req, parameters[i], mapSession, hasSession);
+                    arguments[i] = noObjectParameter(req, parameters[i]);
                 }
             }
             // invoke method
             result = mappedMethod.invoke(controller, arguments);
             // verify if map is not null to rectify HttpSession
-            if (hasSession) {
+            MapSession mapSession = SessionUtil.getMapSessionFromObject(arguments);
+            if (mapSession != null) {
                 SessionUtil.rectifyHttpSession(req.getSession(), mapSession);
             }
         } catch (Exception e) {
@@ -239,7 +237,7 @@ public class FrontControllerServlet extends HttpServlet {
     } 
 
     // function to controle if is no object in invokemethod
-    public Object noObjectParameter(HttpServletRequest req, Parameter parameter, MapSession mapSession, Boolean hasSession) throws Exception {
+    public Object noObjectParameter(HttpServletRequest req, Parameter parameter) throws Exception {
         Object argument = null;
 
         if (this.applicationContext != null && parameter.getType().isInstance(this.applicationContext)) {
@@ -247,7 +245,7 @@ public class FrontControllerServlet extends HttpServlet {
         }
         else if (parameter.getType() == MapSession.class) {
             // init session from httpsession
-            hasSession = true;
+            MapSession mapSession = new MapSession();
             SessionUtil.initMapSession(req.getSession(), mapSession);
             argument = mapSession;
         }
