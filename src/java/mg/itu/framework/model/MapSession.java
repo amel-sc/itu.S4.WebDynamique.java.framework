@@ -2,9 +2,10 @@ package mg.itu.framework.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MapSession {
-    Map<String, Object> maps = new HashMap<String, Object>();
+    private Map<String, Object> maps = new HashMap<String, Object>();
 
     // function to add in map
     public void add(String key, Object value) {
@@ -19,5 +20,10 @@ public class MapSession {
     // functoin to remove in map
     public void remove(String key) {
         maps.remove(key);
+    }
+
+    // function to get keys of map
+    public Set<String> getKeys() {
+        return maps.keySet();
     }
 }
