@@ -15,4 +15,9 @@ public class MapSession {
     public Object get(String key) {
         return maps.get(key);
     }
+
+    // functoin to remove in map
+    public void remove(String key) {
+        maps.remove(key);
+    }
 }
