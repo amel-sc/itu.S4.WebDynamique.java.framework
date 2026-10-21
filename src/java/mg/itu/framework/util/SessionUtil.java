@@ -27,9 +27,24 @@ public class SessionUtil {
         setMapSessionContext(req, mapsession);
     }
 
+    // function to delete value in session but not in mapsession
+    public static void rectifyDeleteHttpSession(HttpServletRequest req, MapSession mapsession) {
+        Enumeration<String> httpsession_keys = req.getSession().getAttributeNames();
+
+        while (httpsession_keys.hasMoreElements()) {
+            String key = httpsession_keys.nextElement();
+            if (mapsession.get(key) == null) {
+                req.getSession().removeAttribute(key);
+            }
+        }
+    }
+
     // function to rectify values in HttpSession (Après invoke)
     public static void rectifyHttpSession(HttpServletRequest req, MapSession mapsession) {
         Set<String> keys = mapsession.getKeys();
+
+        // rectify deletion
+        rectifyDeleteHttpSession(req, mapsession);
 
         for (String key : keys) {
             req.getSession().setAttribute(key, mapsession.get(key));
@@ -56,11 +71,16 @@ public class SessionUtil {
 
     // function to set mapsession in ServletContext
     public static void setMapSessionContext(HttpServletRequest req, MapSession mapsession) {
-        req.getServletContext().setAttribute("mapsession", mapsession);
+        String id_session = req.getSession().getId();
+        // set attribute in sessions
+        Map<String, MapSession> sessions_tmp =  (Map<String, MapSession>) req.getServletContext().getAttribute("sessions");
+        sessions_tmp.put(id_session, mapsession);
     }
 
     // function to get mapsession in ServletContext
     public static MapSession getMapSessionContext(HttpServletRequest req) {
-        return (MapSession) req.getServletContext().getAttribute("mapsession");
+        String id_session = req.getSession().getId();
+        // get Mapsession
+        return (MapSession) ((Map<String, MapSession>) req.getServletContext().getAttribute("sessions")).get(id_session);
     }
 }

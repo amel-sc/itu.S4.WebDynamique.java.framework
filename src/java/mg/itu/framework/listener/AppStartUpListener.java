@@ -9,6 +9,7 @@ import java.util.List;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
+import mg.itu.framework.model.MapSession;
 import mg.itu.framework.model.UrlMethod;
 import mg.itu.framework.util.*;
 import mg.itu.framework.annotation.*;
@@ -32,6 +33,7 @@ public class AppStartUpListener implements ServletContextListener {
             sce.getServletContext().setAttribute("listUrl", this.listUrl);
             sce.getServletContext().setAttribute("prefixe", this.prefixe);
             sce.getServletContext().setAttribute("suffixe", this.suffixe);
+            sce.getServletContext().setAttribute("sessions", new HashMap<String, MapSession>());
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
