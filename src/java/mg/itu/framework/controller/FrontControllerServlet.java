@@ -33,6 +33,7 @@ public class FrontControllerServlet extends HttpServlet {
     private Map<UrlMethod, Method> listUrl;
     private String prefixe;
     private String suffixe;
+    private String sessionAuth;
     private ApplicationContext applicationContext;
 
     public void init() throws ServletException {
@@ -42,6 +43,7 @@ public class FrontControllerServlet extends HttpServlet {
             this.listUrl = (Map<UrlMethod, Method>) servletContext.getAttribute("listUrl");
             this.prefixe = (String) servletContext.getAttribute("prefixe");
             this.suffixe = (String) servletContext.getAttribute("suffixe");
+            this.sessionAuth = (String) servletContext.getAttribute("sessionAuth");
             // get spring context
             this.applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
         } catch (Exception e) {
