@@ -24,6 +24,7 @@ import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.model.UrlMethod;
 import mg.itu.framework.model.ModelAndView;
 import mg.itu.framework.model.MapFile;
+import mg.itu.framework.model.MapSession;
 
 import com.google.gson.Gson;
 
@@ -205,7 +206,7 @@ public class FrontControllerServlet extends HttpServlet {
             // get list of parameters of method
             Parameter[] parameters = mappedMethod.getParameters();
             // get url parameters as map
-            Map<String, String[]> urlParamsMap = req.getParameterMap(); 
+            Map<String, String[]> urlParamsMap = req.getParameterMap();         
 
             // object having arguments for invoke object
             Object[] arguments = new Object[parameters.length];
@@ -223,6 +224,10 @@ public class FrontControllerServlet extends HttpServlet {
             }
             // invoke method
             result = mappedMethod.invoke(controller, arguments);
+            // verify if map is not null to rectify HttpSession
+            if (SessionUtil.verifyMapSessionObject(req, arguments)) {
+                SessionUtil.rectifyHttpSession(req, SessionUtil.getMapSessionContext(req));
+            }
         } catch (Exception e) {
             throw e;
         }
@@ -236,6 +241,11 @@ public class FrontControllerServlet extends HttpServlet {
 
         if (this.applicationContext != null && parameter.getType().isInstance(this.applicationContext)) {
             argument = this.applicationContext;
+        }
+        else if (parameter.getType() == MapSession.class) {
+            // init session from httpsession
+            SessionUtil.initMapSession(req, SessionUtil.getMapSessionContext(req));
+            argument = SessionUtil.getMapSessionContext(req);
         }
         else if (parameter.getType() == MapFile[].class) {
             if (FileUtil.verifyEnctype(req)) {
