@@ -136,6 +136,8 @@ public class FrontControllerServlet extends HttpServlet {
             // create new instance of controller
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
+            // verify if mappedMethod has auth and sessionAuth existe in mapsession
+
             if (ClassUtil.HasJsonAnnotation(mappedMethod)) {
                 if (!(listUrl.get(wantedUrlMethod).getReturnType() == void.class)) {
                     executeUrlWithJson(req, res, mappedMethod, controller);
