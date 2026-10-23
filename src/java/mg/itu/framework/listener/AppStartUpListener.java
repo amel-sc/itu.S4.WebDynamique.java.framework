@@ -38,7 +38,7 @@ public class AppStartUpListener implements ServletContextListener {
             sce.getServletContext().setAttribute("sessionAuth", this.sessionAuth);
             sce.getServletContext().setAttribute("sessions", new HashMap<String, MapSession>());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

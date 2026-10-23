@@ -139,28 +139,29 @@ public class FrontControllerServlet extends HttpServlet {
             // verify if mappedMethod has auth and sessionAuth existe in mapsession
             Object sessionAuthValue = null;
             if (SessionUtil.getMapSessionContext(req) != null) {
-                sessionAuthValue = SessionUtil.getMapSessionContext(req).get(sessionAuth);
+                sessionAuthValue = SessionUtil.getMapSessionContext(req).get(this.sessionAuth);
             } 
-            if (ClassUtil.HasAuthAnnotation(mappedMethod) && sessionAuthValue != null) {
-                if (ClassUtil.HasJsonAnnotation(mappedMethod)) {
-                    if (!(listUrl.get(wantedUrlMethod).getReturnType() == void.class)) {
-                        executeUrlWithJson(req, res, mappedMethod, controller);
-                    }
-                    else {
-                        throw new Exception("La méthode ne peux pas retourner du JSON");
-                    }
+            if (ClassUtil.HasAuthAnnotation(mappedMethod)) {
+                if (sessionAuthValue == null) {
+                    throw new Exception("Authenfication introuvable");
+                }
+            }
+            // function to execute method
+            if (ClassUtil.HasJsonAnnotation(mappedMethod)) {
+                if (!(listUrl.get(wantedUrlMethod).getReturnType() == void.class)) {
+                    executeUrlWithJson(req, res, mappedMethod, controller);
                 }
                 else {
-                    if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
-                        executeUrlNoJson(req, res, mappedMethod, controller);
-                    }
-                    else {
-                        throw new Exception("La méthode voulue ne retourne pas un Objet de type ModelAndView");
-                    }
+                    throw new Exception("La méthode ne peux pas retourner du JSON");
                 }
             }
             else {
-                throw new Exception("Authentification introuvable");
+                if (listUrl.get(wantedUrlMethod).getReturnType() == ModelAndView.class) {
+                    executeUrlNoJson(req, res, mappedMethod, controller);
+                }
+                else {
+                    throw new Exception("La méthode voulue ne retourne pas un Objet de type ModelAndView");
+                }
             }
 
         } catch (Exception e) {
