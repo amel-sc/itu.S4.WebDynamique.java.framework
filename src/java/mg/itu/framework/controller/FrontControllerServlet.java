@@ -146,15 +146,7 @@ public class FrontControllerServlet extends HttpServlet {
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
             // verify if mappedMethod has auth and sessionAuth existe in mapsession
-            Object sessionAuthValue = null;
-            if (SessionUtil.getMapSessionContext(req) != null) {
-                sessionAuthValue = SessionUtil.getMapSessionContext(req).get(this.sessionAuth);
-            } 
-            if (ClassUtil.HasAuthAnnotation(mappedMethod)) {
-                if (sessionAuthValue == null) {
-                    throw new Exception("Authenfication introuvable");
-                }
-            }
+            AuthUtil.verifyAuth(req, mappedMethod, sessionAuth);
             // function to execute method
             if (ClassUtil.HasJsonAnnotation(mappedMethod)) {
                 if (!(listUrl.get(wantedUrlMethod).getReturnType() == void.class)) {
