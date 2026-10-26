@@ -21,6 +21,7 @@ public class AppStartUpListener implements ServletContextListener {
     private String prefixe;
     private String suffixe;
     private String sessionAuth;
+    private String sessionRole;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -28,6 +29,7 @@ public class AppStartUpListener implements ServletContextListener {
         this.prefixe = sce.getServletContext().getInitParameter("prefixe");
         this.suffixe = sce.getServletContext().getInitParameter("suffixe");
         this.sessionAuth = sce.getServletContext().getInitParameter("sessionAuth");
+        this.sessionRole = sce.getServletContext().getInitParameter("sessionRole");
         // get list url
         try {
             List<Class<?>> listClassController = ClassUtil.getClassByPackageWithUrlMapping(packageName, Controller.class, listUrl);
@@ -36,6 +38,7 @@ public class AppStartUpListener implements ServletContextListener {
             sce.getServletContext().setAttribute("prefixe", this.prefixe);
             sce.getServletContext().setAttribute("suffixe", this.suffixe);
             sce.getServletContext().setAttribute("sessionAuth", this.sessionAuth);
+            sce.getServletContext().setAttribute("sessionRole", this.sessionRole);
             sce.getServletContext().setAttribute("sessions", new HashMap<String, MapSession>());
         } catch (Exception e) {
             e.printStackTrace();

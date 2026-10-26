@@ -34,6 +34,7 @@ public class FrontControllerServlet extends HttpServlet {
     private String prefixe;
     private String suffixe;
     private String sessionAuth;
+    private String sessionRole;
     private ApplicationContext applicationContext;
 
     public void init() throws ServletException {
@@ -44,6 +45,7 @@ public class FrontControllerServlet extends HttpServlet {
             this.prefixe = (String) servletContext.getAttribute("prefixe");
             this.suffixe = (String) servletContext.getAttribute("suffixe");
             this.sessionAuth = (String) servletContext.getAttribute("sessionAuth");
+            this.sessionRole = (String) servletContext.getAttribute("sessionRole");
             // get spring context
             this.applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
         } catch (Exception e) {
