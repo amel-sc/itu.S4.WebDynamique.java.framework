@@ -25,9 +25,9 @@ public class RoleUtil {
             }
             // verify if rôle is correct in mappedMethod
             String roles = annotation.roles();
-            if (roles != null || roles.trim() != "") {
+            if (roles != null && !roles.trim().equals("")) {
                 if (!roleExist(splitRoles(roles), (String) SessionUtil.getMapSessionContext(req).get(sessionRole))) {
-                    throw new Exception("Vous avez le rôle pour accéder à cette page.");
+                    throw new Exception("Vous avez pas le rôle pour accéder à cette page.");
                 }
             }
         }
