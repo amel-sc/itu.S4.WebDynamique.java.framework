@@ -147,8 +147,8 @@ public class FrontControllerServlet extends HttpServlet {
             // create new instance of controller
             Object controller = controllerClass.getDeclaredConstructor().newInstance();
 
-            // verify if mappedMethod has auth and sessionAuth existe in mapsession
-            AuthUtil.verifyAuth(req, mappedMethod, sessionAuth);
+            // verify if method has auth or role
+            RoleUtil.verifyRole(req, mappedMethod, this.sessionAuth, this.sessionRole);
             // function to execute method
             if (ClassUtil.HasJsonAnnotation(mappedMethod)) {
                 if (!(listUrl.get(wantedUrlMethod).getReturnType() == void.class)) {
