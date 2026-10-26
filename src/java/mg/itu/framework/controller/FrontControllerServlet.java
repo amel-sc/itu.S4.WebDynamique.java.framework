@@ -68,66 +68,75 @@ public class FrontControllerServlet extends HttpServlet {
     // function to get uri (with PrintWriter)
     public void processRequestWithPrintWriter(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         PrintWriter out = res.getWriter();
-
-        // get URI
-        String uri = req.getRequestURI();
-        String contextPath = req.getContextPath();
-        // get after url
-        String afterUrl = uri.substring(contextPath.length());
-
-        out.println(afterUrl);
-
-        // get method
-        String method = req.getMethod();
+        try {
+            // get URI
+            String uri = req.getRequestURI();
+            String contextPath = req.getContextPath();
+            // get after url
+            String afterUrl = uri.substring(contextPath.length());
     
-        // create new UrlMethod object
-        UrlMethod wantedUrlMethod = new UrlMethod(afterUrl, method);
-
-        // url wanted
-        out.println("Url : "+wantedUrlMethod.getUrl()+", "+"Method : "+wantedUrlMethod.getMethod());
-
-        out.println();
+            out.println(afterUrl);
+    
+            // get method
+            String method = req.getMethod();
         
-        out.println("Url with method : ");     
-        if (listUrl.containsKey(wantedUrlMethod)) {
-            out.println(wantedUrlMethod.getUrl()+", "+wantedUrlMethod.getMethod()+" - "+listUrl.get(wantedUrlMethod).getDeclaringClass().getName()+" - "+listUrl.get(wantedUrlMethod).getName());
+            // create new UrlMethod object
+            UrlMethod wantedUrlMethod = new UrlMethod(afterUrl, method);
+    
+            // url wanted
+            out.println("Url : "+wantedUrlMethod.getUrl()+", "+"Method : "+wantedUrlMethod.getMethod());
+    
+            out.println();
+            
+            out.println("Url with method : ");     
+            if (listUrl.containsKey(wantedUrlMethod)) {
+                out.println(wantedUrlMethod.getUrl()+", "+wantedUrlMethod.getMethod()+" - "+listUrl.get(wantedUrlMethod).getDeclaringClass().getName()+" - "+listUrl.get(wantedUrlMethod).getName());
+    
+                this.executeUrlMethod(req, res, wantedUrlMethod);
+            }
+            else {
+                for (UrlMethod i : listUrl.keySet()) {
+                    out.println(i.getUrl()+", "+i.getMethod()+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
+                }   
+            }
+        } catch (Exception e) {
+            out.println("Erreur : "+e.getMessage());
+        }
 
-            this.executeUrlMethod(req, res, wantedUrlMethod);
-        }
-        else {
-            for (UrlMethod i : listUrl.keySet()) {
-                out.println(i.getUrl()+", "+i.getMethod()+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
-            }   
-        }
     }
 
      // function to get uri 
     public void processRequest(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         PrintWriter out = res.getWriter();
-        // get URI
-        String uri = req.getRequestURI();
-        String contextPath = req.getContextPath();
-        // get after url
-        String afterUrl = uri.substring(contextPath.length());
-
-        // get method
-        String method = req.getMethod();
+        try {
+            // get URI
+            String uri = req.getRequestURI();
+            String contextPath = req.getContextPath();
+            // get after url
+            String afterUrl = uri.substring(contextPath.length());
     
-        // create new UrlMethod object
-        UrlMethod wantedUrlMethod = new UrlMethod(afterUrl, method);
-
-        if (listUrl.containsKey(wantedUrlMethod)) {
-            this.executeUrlMethod(req, res, wantedUrlMethod);
-        }
-        else {
-            for (UrlMethod i : listUrl.keySet()) {
-                out.println(i.getUrl()+", "+i.getMethod()+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
-            }   
+            // get method
+            String method = req.getMethod();
+        
+            // create new UrlMethod object
+            UrlMethod wantedUrlMethod = new UrlMethod(afterUrl, method);
+    
+            if (listUrl.containsKey(wantedUrlMethod)) {
+                this.executeUrlMethod(req, res, wantedUrlMethod);
+            }
+            else {
+                for (UrlMethod i : listUrl.keySet()) {
+                    out.println(i.getUrl()+", "+i.getMethod()+" - "+listUrl.get(i).getDeclaringClass().getName()+" - "+listUrl.get(i).getName());
+                }   
+            }
+            
+        } catch (Exception e) {
+            out.println("Erreur : "+e.getMessage());
         }
     }
 
     // function to execute wantedUrlMethod
-    public void executeUrlMethod(HttpServletRequest req, HttpServletResponse res, UrlMethod wantedUrlMethod) {
+    public void executeUrlMethod(HttpServletRequest req, HttpServletResponse res, UrlMethod wantedUrlMethod) throws Exception {
         try {
             // get method
             Method mappedMethod = listUrl.get(wantedUrlMethod);
@@ -165,7 +174,7 @@ public class FrontControllerServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
