@@ -8,5 +8,5 @@ import java.lang.annotation.ElementType;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Role {
-    String roles();
+    String roles() default "";
 }
