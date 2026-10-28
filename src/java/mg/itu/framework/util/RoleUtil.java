@@ -13,12 +13,15 @@ import mg.itu.framework.annotation.Role;
 public class RoleUtil {
     // function to verify if method has annotation
     public static void verifyRole(HttpServletRequest req, Method mappedMethod, String sessionAuth, String sessionRole) throws Exception {
-        // verify auth first
-        AuthUtil.verifyAuth(req, mappedMethod, sessionAuth);
-
         // verify role
         Role annotation = mappedMethod.getAnnotation(Role.class);
         if (annotation != null) {
+            // verify auth first
+            if (!ClassUtil.HasAuthAnnotation(mappedMethod)) {
+                throw new Exception("Vous ne pouvez pas utiliser l'annotation Role sans l'annotation Auth");
+            }
+            AuthUtil.verifyAuth(req, mappedMethod, sessionAuth);
+
             // verify if sessionRole exist session
             if (SessionUtil.getMapSessionContext(req) == null || SessionUtil.getMapSessionContext(req).get(sessionRole) == null) {
                 throw new Exception("Le rôle doit être spécifier avant son utilisation");
