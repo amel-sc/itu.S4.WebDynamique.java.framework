@@ -11,6 +11,7 @@ import java.util.Map;
 
 import mg.itu.framework.annotation.UrlMapping;
 import mg.itu.framework.annotation.Json;
+import mg.itu.framework.annotation.Auth;
 import mg.itu.framework.model.UrlMethod;
 
 public class ClassUtil {
@@ -97,6 +98,18 @@ public class ClassUtil {
         boolean hasAnnotation = false;
 
         Json annotation = method.getAnnotation(Json.class);
+        if (annotation != null) {
+            hasAnnotation = true;
+        }
+
+        return hasAnnotation;
+    }
+
+    // function to verify if a method has an annotation for auth
+    public static boolean HasAuthAnnotation(Method method) {
+        boolean hasAnnotation = false;
+
+        Auth annotation = method.getAnnotation(Auth.class);
         if (annotation != null) {
             hasAnnotation = true;
         }
