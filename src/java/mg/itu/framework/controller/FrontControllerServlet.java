@@ -38,7 +38,7 @@ public class FrontControllerServlet extends HttpServlet {
     private Map<Class<?>, Object> controllers;
     private ApplicationContext applicationContext;
 
-    public void init() throws ServletException {tring
+    public void init() throws ServletException {
         ServletContext servletContext = this.getServletContext();
 
         try {
