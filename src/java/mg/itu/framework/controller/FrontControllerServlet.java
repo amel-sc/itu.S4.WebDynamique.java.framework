@@ -147,7 +147,7 @@ public class FrontControllerServlet extends HttpServlet {
             // get class controller
             Class<?> controllerClass = mappedMethod.getDeclaringClass();
             // create new instance of controller
-            Object controller = controllerClass.getDeclaredConstructor().newInstance();
+            Object controller = ControllerUtil.get(this.controllers, controllerClass);
 
             // verify auth
             AuthUtil.verifyAuth(req, mappedMethod, sessionAuth);
