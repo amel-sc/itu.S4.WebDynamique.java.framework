@@ -35,6 +35,7 @@ public class FrontControllerServlet extends HttpServlet {
     private String suffixe;
     private String sessionAuth;
     private String sessionRole;
+    private Map<Class<?>, Object> controllers;
     private ApplicationContext applicationContext;
 
     public void init() throws ServletException {
@@ -46,6 +47,7 @@ public class FrontControllerServlet extends HttpServlet {
             this.suffixe = (String) servletContext.getAttribute("suffixe");
             this.sessionAuth = (String) servletContext.getAttribute("sessionAuth");
             this.sessionRole = (String) servletContext.getAttribute("sessionRole");
+            this.controllers = (Map<Class<?>, Object>) servletContext.getAttribute("controllers");
             // get spring context
             this.applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
         } catch (Exception e) {
@@ -145,7 +147,7 @@ public class FrontControllerServlet extends HttpServlet {
             // get class controller
             Class<?> controllerClass = mappedMethod.getDeclaringClass();
             // create new instance of controller
-            Object controller = controllerClass.getDeclaredConstructor().newInstance();
+            Object controller = ControllerUtil.get(this.controllers, controllerClass);
 
             // verify auth
             AuthUtil.verifyAuth(req, mappedMethod, sessionAuth);
